@@ -111,7 +111,6 @@ header.open .burger span::after{top:0;transform:rotate(-45deg)}
 .hero .inner{justify-self:start;width:min(58%,860px);margin-left:max(0px,(100vw - 1400px)/2)}
 @keyframes zoom{to{transform:scale(1.12)}}
 .hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(18,16,14,.5),transparent 22%,transparent 72%,rgba(18,16,14,.55))}
-.hero .arc{position:absolute;z-index:2;left:3%;width:min(56%,840px);top:17%;height:auto;overflow:visible;pointer-events:none}
 .hero .inner{position:relative;z-index:3;padding:0 20px}
 .hero .welcome{font-family:var(--script);color:var(--gold);font-size:clamp(4.4rem,11vw,8.2rem);line-height:.8;display:block;transform:translate(-6%,0) rotate(-5deg);text-shadow:0 4px 30px rgba(0,0,0,.35)}
 .hero h1{font-family:var(--sans);font-weight:800;letter-spacing:.24em;font-size:clamp(2rem,6vw,4.4rem);line-height:1;margin-top:-.28em;margin-right:-.24em;text-shadow:0 4px 30px rgba(0,0,0,.4)}
@@ -294,8 +293,7 @@ footer small{font-size:.74rem;opacity:.65}
   .hero .shot::after{background:linear-gradient(0deg,#141312,transparent 45%)}
   .hero .shot i{background-position:center 55%;filter:brightness(.5)}
   .hero .inner{justify-self:center;width:100%;margin-left:0}
-  .hero .arc{left:4%;width:92%}
-  .chef .grid{grid-template-columns:1fr;gap:60px}
+    .chef .grid{grid-template-columns:1fr;gap:60px}
   .chef .portrait{max-width:340px}
   .chef .badge{right:-14px;width:110px;height:110px}
   .links,.icons,.nav .reserve-btn{display:none}
@@ -333,8 +331,7 @@ footer small{font-size:.74rem;opacity:.65}
   .dish{flex-basis:76vw}
   .visit .card{padding:40px 22px}
   .story .facts{gap:22px}
-  .hero .arc{top:18%}
-  .hero .sub{letter-spacing:.2em;margin-right:-.2em;font-size:.7rem}
+    .hero .sub{letter-spacing:.2em;margin-right:-.2em;font-size:.7rem}
   .hero h1{letter-spacing:.16em;margin-right:-.16em}
   .mcall{display:flex;position:fixed;left:14px;right:14px;bottom:14px;z-index:40;justify-content:center;background:var(--red);color:#fff;padding:15px;font-weight:700;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;box-shadow:0 10px 30px rgba(0,0,0,.3)}
   footer .bottom{padding-bottom:100px}
@@ -371,10 +368,6 @@ footer small{font-size:.74rem;opacity:.65}
 <section class="hero" id="pocetna" style="padding:0">
   <div class="photo bg" aria-hidden="true"></div>
   <div class="shot" aria-hidden="true"><i></i></div>
-  <svg class="arc" viewBox="0 0 1000 170" preserveAspectRatio="none" aria-hidden="true">
-    <path id="heroArc" d="M0 165 Q500 -70 1000 165" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
-    <circle r="9" fill="#fff"><animateMotion dur="14s" repeatCount="indefinite" keyPoints="0.08;0.92;0.08" keyTimes="0;0.5;1" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"><mpath href="#heroArc"/></animateMotion></circle>
-  </svg>
   <div class="inner">
     <span class="welcome">Benvenuti</span>
     <h1>MISTA OSTERIA</h1>
