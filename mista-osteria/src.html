@@ -154,7 +154,9 @@ section{padding:120px 0}
 
 /* stories: original Instagram carousel shown as one continuous panorama */
 .stories{padding:110px 0 0;overflow:hidden;position:relative}
-.st-head{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;margin-bottom:40px}
+.st-head{display:flex;align-items:center;justify-content:space-between;gap:30px;margin-bottom:40px;padding:0 clamp(20px,4vw,64px)}
+.st-menu{gap:12px;border-radius:40px;padding:18px 40px;flex:none}
+.st-menu span{transition:transform .25s}.st-menu:hover span{transform:translateX(4px)}
 .st-label{font-size:.66rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--ink);white-space:nowrap;display:flex;align-items:center;gap:10px;margin-bottom:18px}
 .st-label i{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 rgba(196,67,43,.5);animation:pulse 2s infinite}
 @keyframes pulse{70%{box-shadow:0 0 0 9px rgba(196,67,43,0)}100%{box-shadow:0 0 0 0 rgba(196,67,43,0)}}
@@ -280,7 +282,7 @@ footer small{font-size:.74rem;opacity:.65}
 }
 @media (min-width:1001px){.mpanel{display:flex;align-items:center;gap:30px;flex:1}}
 @media (max-width:900px){
-  .st-head{flex-direction:column;align-items:flex-start;gap:18px;margin-bottom:28px}
+  .st-head{flex-direction:column;align-items:flex-start;gap:22px;margin-bottom:28px}
   .st-ctrl{align-self:stretch}
   .st-count{margin-right:auto;text-align:left}
   .st-slide{width:82vw}
@@ -387,11 +389,12 @@ footer small{font-size:.74rem;opacity:.65}
 </section>
 
 <section class="stories" id="iskustvo" aria-roledescription="carousel" aria-label="Mista priče">
-  <div class="wrap st-head reveal">
+  <div class="st-head reveal">
     <div>
       <span class="st-label"><i></i>Mista priče</span>
       <h2 class="offset-title"><span>Od testa</span><span class="l2"><em class="tag">Korak po korak</em>do tanjira</span></h2>
     </div>
+    <a class="btn btn-red st-menu" href="#meni">Pogledaj meni <span aria-hidden="true">→</span></a>
   </div>
   <div class="st-rail reveal">
     <div class="st-track">
@@ -402,9 +405,6 @@ footer small{font-size:.74rem;opacity:.65}
       <figure class="st-slide"><img src="{{slide-5.webp}}" alt="Rižoto — kremasto, bogato, neodoljivo" draggable="false"></figure>
       <figure class="st-slide"><img src="{{slide-6.webp}}" alt="Premium steakovi — pažljivo birani komadi, pripremljeno do savršenstva" draggable="false"></figure>
     </div>
-  </div>
-  <div class="wrap">
-    <div class="st-foot" style="justify-content:flex-end"><a href="#meni" style="color:var(--red)">Pogledaj meni →</a></div>
   </div>
   <div class="marquee" aria-hidden="true"><div>
     <span>Pizza napoletana</span><span>buon appetito</span><span>48h testo</span><span>la dolce vita</span><span>Pasta fresca</span><span>mangia bene</span><span>Risotto</span><span>ciao Kruševac</span>
