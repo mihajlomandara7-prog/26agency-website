@@ -176,9 +176,9 @@ section{padding:120px 0}
 .st-progress span{position:absolute;left:0;top:0;bottom:0;width:100%;background:var(--red);transform-origin:left;transform:scaleX(0)}
 .st-foot{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--muted)}
 
-.marquee{margin-top:80px;border-top:1px solid #eee;border-bottom:1px solid #eee;padding:22px 0;overflow:hidden;white-space:nowrap}
+.marquee{margin-top:80px;border-bottom:1px solid #eee;padding:22px 0;overflow:hidden;white-space:nowrap}
 .marquee div{display:inline-flex;animation:mq 38s linear infinite}
-.marquee span{font-family:var(--sans);font-weight:800;font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.01em;text-transform:uppercase;color:transparent;-webkit-text-stroke:1.2px var(--ink);padding-right:.5em}
+.marquee span{font-family:var(--sans);font-weight:800;font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.01em;text-transform:uppercase;color:#fff;-webkit-text-stroke:2.4px var(--ink);paint-order:stroke fill;padding-right:.5em}
 .marquee span:nth-child(even){color:var(--red);-webkit-text-stroke:0;font-family:var(--script);text-transform:none;font-weight:400;font-size:clamp(2.6rem,5.6vw,4.6rem)}
 @keyframes mq{to{transform:translateX(-50%)}}
 
