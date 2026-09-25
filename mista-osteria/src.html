@@ -37,11 +37,6 @@
   --i-menu:url({{menu-paper.webp}});
   --i-sendvic:url({{sendvic.webp}});
   --i-sendvic-detail:url({{sendvic-detail.webp}});
-  --i-st-1:url({{story-margherita.webp}});
-  --i-st-2:url({{story-pizza.webp}});
-  --i-st-3:url({{story-testo.webp}});
-  --i-st-4:url({{story-pasta.webp}});
-  --i-st-5:url({{story-rizoto.webp}});
 
   --green:#1e3b31;
   --red:#c4432b;
@@ -157,66 +152,29 @@ section{padding:120px 0}
 .story .facts b{display:block;font-family:var(--serif);font-weight:400;font-size:1.9rem;color:var(--green);line-height:1.1}
 .story .facts span{font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
 
-/* stories */
+/* stories: original Instagram carousel shown as one continuous panorama */
 .stories{padding:110px 0 0;overflow:hidden;position:relative}
-.st-top{display:flex;align-items:center;gap:22px;margin-bottom:26px}
-.st-bars{flex:1;display:flex;gap:6px}
-.st-bars button{flex:1;height:22px;background:none;border:0;cursor:pointer;position:relative;padding:0}
-.st-bars button::before,.st-bars button span{content:"";position:absolute;left:0;right:0;top:10px;height:2px;background:#e8e2da;border-radius:2px}
-.st-bars button span{right:auto;width:0;background:var(--red)}
-.st-bars button.done span{width:100%}
-.st-bars button.on span{animation:fill var(--st-dur,6s) linear forwards}
-.stories.paused .st-bars button.on span{animation-play-state:paused}
-@keyframes fill{to{width:100%}}
-.st-label{font-size:.66rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--ink);white-space:nowrap;display:flex;align-items:center;gap:10px}
+.st-head{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;margin-bottom:40px}
+.st-label{font-size:.66rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--ink);white-space:nowrap;display:flex;align-items:center;gap:10px;margin-bottom:18px}
 .st-label i{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 rgba(196,67,43,.5);animation:pulse 2s infinite}
 @keyframes pulse{70%{box-shadow:0 0 0 9px rgba(196,67,43,0)}100%{box-shadow:0 0 0 0 rgba(196,67,43,0)}}
-.st-play{background:none;border:1px solid #ddd;width:34px;height:34px;border-radius:50%;cursor:pointer;display:grid;place-items:center;color:var(--ink)}
-.st-play:hover{border-color:var(--ink)}
-.st-play svg{width:12px;height:12px}
-.st-play .pl{display:none}.stories.paused .st-play .pa{display:none}.stories.paused .st-play .pl{display:block}
-
-.st-stage{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);align-items:center;min-height:min(78vh,700px);position:relative}
-.st-texts{position:relative;min-height:420px;display:grid;align-items:center}
-.st-text{grid-area:1/1;pointer-events:none}
-.st-text.on{pointer-events:auto}
-.st-text > *{opacity:0;transform:translateY(34px);transition:opacity .5s ease,transform .5s ease}
-.st-text.on > *{opacity:1;transform:none;transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
-.st-text.on > :nth-child(2){transition-delay:.08s}
-.st-text.on > :nth-child(3){transition-delay:.16s}
-.st-text.on > :nth-child(4){transition-delay:.24s}
-.st-num{font-family:var(--sans);font-weight:800;font-size:clamp(4.5rem,9vw,8rem);line-height:.8;color:transparent;-webkit-text-stroke:1.4px var(--gold);letter-spacing:-.02em;display:flex;align-items:flex-start;gap:10px}
-.st-num small{font-size:.8rem;-webkit-text-stroke:0;color:var(--muted);letter-spacing:.2em;font-weight:600;margin-top:10px}
-.st-kicker{display:block;margin:22px 0 12px;font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;font-weight:700;color:var(--red)}
-.st-text h3{font-family:var(--sans);font-weight:800;color:var(--ink);font-size:clamp(2rem,4.2vw,3.5rem);line-height:1.05;letter-spacing:-.02em;margin-bottom:20px}
-.st-text p{font-size:clamp(1.05rem,1.6vw,1.35rem);font-weight:400;color:#3b3833;line-height:1.5;max-width:420px}
-.st-text p.stack span{display:block}
-.st-chips{display:flex;flex-wrap:wrap;gap:8px;max-width:440px}
-.st-chips li{list-style:none;border:1px solid #e4ddd3;border-radius:40px;padding:8px 16px;font-size:.84rem;color:var(--ink);background:#fff}
-.st-chips li:first-child{background:var(--ink);color:#fff;border-color:var(--ink)}
-
-.st-media-wrap{position:relative;height:min(78vh,700px);margin-right:calc(-1 * max(20px,(100vw - 1180px)/2))}
-.st-media{position:absolute;inset:0;opacity:0;background:#fff;clip-path:circle(0% at 50% 50%);transition:clip-path 1.15s cubic-bezier(.7,0,.2,1),opacity 0s 1.15s}
-.st-media.on{opacity:1;clip-path:circle(150% at 50% 50%);z-index:2;transition:clip-path 1.15s cubic-bezier(.7,0,.2,1)}
-.st-media.leaving{opacity:1;clip-path:circle(150% at 50% 50%);z-index:1;transition:none}
-.st-media .im{position:absolute;background-repeat:no-repeat;transition:transform 6s ease-out}
-.st-media.on .im{transform:scale(1.04)}
-/* per-slide art direction */
-.st-media.photo .im{inset:0 max(20px,(100vw - 1180px)/2) 0 8%;background-size:cover;background-position:center;border-radius:999px 999px 18px 18px}
-.st-media.pizza .im{inset:4% 6% 4% 8%;background-size:contain;background-position:center;animation:spin 70s linear infinite}
-.st-media.pasta .im{inset:6% max(20px,(100vw - 1180px)/2) 6% 4%;background-size:contain;background-position:center}
-.st-media.pasta.on .im{animation:float 6s ease-in-out infinite}
-.st-media.rizoto .im{inset:0 0 0 30%;background-size:contain;background-position:right center}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes float{50%{transform:translateY(-12px)}}
-.st-media .cap{position:absolute;left:8%;bottom:22px;z-index:3;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:#fff;background:rgba(28,28,26,.55);backdrop-filter:blur(6px);padding:8px 14px;border-radius:30px}
-.st-media.pizza .cap,.st-media.pasta .cap,.st-media.rizoto .cap{background:var(--ink)}
-.st-nav{display:flex;gap:10px;margin-top:34px}
-.st-nav button{width:52px;height:52px;border-radius:50%;border:1px solid #ddd;background:#fff;cursor:pointer;display:grid;place-items:center;color:var(--ink);transition:.25s}
-.st-nav button:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
-.st-nav svg{width:18px;height:18px}
-.st-hit{position:absolute;top:0;bottom:0;width:50%;z-index:4;background:none;border:0;cursor:pointer}
-.st-hit.l{left:0;cursor:w-resize}.st-hit.r{right:0;cursor:e-resize}
+.st-ctrl{display:flex;align-items:center;gap:10px}
+.st-count{font-family:var(--serif);font-size:1.3rem;color:var(--ink);margin-right:14px;min-width:70px;text-align:right}
+.st-count b{font-weight:500;color:var(--red)}
+.st-ctrl button{width:48px;height:48px;border:1px solid #ddd;background:#fff;cursor:pointer;display:grid;place-items:center;color:var(--ink);transition:.25s}
+.st-ctrl button:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.st-ctrl svg{width:16px;height:16px}
+.st-ctrl .pl{display:none}.stories.paused .st-ctrl .pa{display:none}.stories.paused .st-ctrl .pl{display:block}
+.st-rail{overflow-x:auto;scrollbar-width:none;padding:0 max(20px,(100vw - 1180px)/2);scroll-padding:0 max(20px,(100vw - 1180px)/2);cursor:grab;-webkit-overflow-scrolling:touch}
+.st-rail::-webkit-scrollbar{display:none}
+.st-rail.drag{scroll-snap-type:none;cursor:grabbing}
+.st-rail.drag img{pointer-events:none}
+.st-track{display:flex;width:max-content;box-shadow:0 30px 60px -30px rgba(0,0,0,.35)}
+.st-slide{flex:0 0 auto;width:clamp(280px,30vw,430px);aspect-ratio:4/5;scroll-snap-align:start;margin:0;overflow:hidden;background:#fff}
+.st-slide img{width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none}
+.st-progress{margin-top:34px;height:2px;background:#ece6de;position:relative}
+.st-progress span{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--red);transition:width .4s ease}
+.st-foot{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--muted)}
 
 .marquee{margin-top:80px;border-top:1px solid #eee;border-bottom:1px solid #eee;padding:22px 0;overflow:hidden;white-space:nowrap}
 .marquee div{display:inline-flex;animation:mq 38s linear infinite}
@@ -296,7 +254,7 @@ footer small{font-size:.74rem;opacity:.65}
 /* reveal */
 .reveal{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s ease}
 .reveal.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.st-media .im,.marquee div{animation:none!important}.st-media{transition:none!important}.hero .photo,.notch i{animation:none}html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.marquee div{animation:none!important}.hero .photo,.notch i{animation:none}html{scroll-behavior:auto}}
 
 /* mobile call bar */
 .mcall{display:none}
@@ -324,17 +282,11 @@ footer small{font-size:.74rem;opacity:.65}
 }
 @media (min-width:1001px){.mpanel{display:flex;align-items:center;gap:30px;flex:1}}
 @media (max-width:900px){
-  .st-stage{grid-template-columns:1fr;min-height:0}
-  .st-media-wrap{order:-1;height:min(92vw,520px);margin:0 -20px 24px}
-  .st-media.photo .im{inset:0 20px;border-radius:999px 999px 14px 14px}
-  .st-media.pasta .im{inset:0 20px}
-  .st-media.pizza .im{inset:2% 10%}
-  .st-media.rizoto .im{inset:0 0 0 20%}
-  .st-media .cap{left:36px}
-  .st-texts{min-height:330px;align-items:start}
-  .st-num{font-size:4rem}
-  .st-nav{margin-top:22px}
-  .st-nav .btn{padding:14px 22px;white-space:nowrap}
+  .st-head{flex-direction:column;align-items:flex-start;gap:18px;margin-bottom:28px}
+  .st-ctrl{align-self:stretch}
+  .st-count{margin-right:auto;text-align:left}
+  .st-slide{width:82vw}
+  .st-rail{scroll-snap-type:x mandatory}
   .stories{padding-top:80px}
   .marquee{margin-top:60px}
 }
@@ -438,62 +390,30 @@ footer small{font-size:.74rem;opacity:.65}
 </section>
 
 <section class="stories" id="iskustvo" aria-roledescription="carousel" aria-label="Mista priče">
-  <div class="wrap">
-    <div class="st-top reveal">
+  <div class="wrap st-head reveal">
+    <div>
       <span class="st-label"><i></i>Mista priče</span>
-      <div class="st-bars" role="tablist" aria-label="Izaberi priču"></div>
+      <h2 class="offset-title"><span>Od testa</span><span class="l2"><em class="tag">Korak po korak</em>do tanjira</span></h2>
+    </div>
+    <div class="st-ctrl">
+      <span class="st-count" aria-live="polite"><b>01</b> / 05</span>
+      <button data-dir="-1" aria-label="Prethodna slika"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
       <button class="st-play" aria-label="Pauziraj ili pusti"><svg class="pa" viewBox="0 0 12 12" fill="currentColor"><rect x="2" y="1" width="3" height="10"/><rect x="7" y="1" width="3" height="10"/></svg><svg class="pl" viewBox="0 0 12 12" fill="currentColor"><path d="M2 1l9 5-9 5z"/></svg></button>
+      <button data-dir="1" aria-label="Sledeća slika"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
     </div>
-    <div class="st-stage">
-      <div>
-        <div class="st-texts" aria-live="polite">
-          <div class="st-text" data-label="Uvod">
-            <div class="st-num">01<small>/ 05</small></div>
-            <span class="st-kicker">Mista Osteria</span>
-            <h3>Nešto što ne želiš da propustiš.</h3>
-            <p>Pica koja se kida pod prstima: mekana u sredini, zapečena po ivicama, sa bosiljkom i mocarelom.</p>
-          </div>
-          <div class="st-text" data-label="Pica">
-            <div class="st-num">02<small>/ 05</small></div>
-            <span class="st-kicker">Pizza napoletana</span>
-            <h3>Prave napolitanske pice</h3>
-            <p>Najkvalitetniji italijanski sastojci, direktno iz Italije.</p>
-          </div>
-          <div class="st-text" data-label="Testo">
-            <div class="st-num">03<small>/ 05</small></div>
-            <span class="st-kicker">L’impasto</span>
-            <h3>Savršeno testo</h3>
-            <ul class="st-chips"><li>48h fermentacije</li><li>lagano</li><li>vazdušasto</li><li>autentično</li><li>hrskavo</li><li>prirodni sastojci</li><li>nizak procenat glutena</li></ul>
-          </div>
-          <div class="st-text" data-label="Paste">
-            <div class="st-num">04<small>/ 05</small></div>
-            <span class="st-kicker">Pasta</span>
-            <h3>Autentične italijanske paste</h3>
-            <p>Pripremljene po italijanskoj tradiciji, za savršen ukus u svakom zalogaju.</p>
-          </div>
-          <div class="st-text" data-label="Rižoto">
-            <div class="st-num">05<small>/ 05</small></div>
-            <span class="st-kicker">Risotto</span>
-            <h3>Rižoto</h3>
-            <p class="stack"><span>Kremasto.</span><span>Bogato.</span><span>Neodoljivo.</span></p>
-          </div>
-        </div>
-        <div class="st-nav">
-          <button data-dir="-1" aria-label="Prethodna priča"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
-          <button data-dir="1" aria-label="Sledeća priča"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
-          <a class="btn btn-red" href="#meni" style="margin-left:10px;border-radius:40px">Pogledaj meni</a>
-        </div>
-      </div>
-      <div class="st-media-wrap">
-        <div class="st-media photo"><div class="im" style="background-image:var(--i-st-1)"></div><span class="cap">Margherita iz peći</span></div>
-        <div class="st-media pizza"><div class="im" style="background-image:var(--i-st-2)"></div><span class="cap">Mortadela · burata · pistaći</span></div>
-        <div class="st-media photo"><div class="im" style="background-image:var(--i-st-3);background-position:40% center"></div><span class="cap">Testo · 48h</span></div>
-        <div class="st-media pasta"><div class="im" style="background-image:var(--i-st-4)"></div><span class="cap">Pasta fresca</span></div>
-        <div class="st-media rizoto"><div class="im" style="background-image:var(--i-st-5)"></div><span class="cap">Rižoto</span></div>
-        <button class="st-hit l" aria-label="Prethodna priča"></button>
-        <button class="st-hit r" aria-label="Sledeća priča"></button>
-      </div>
+  </div>
+  <div class="st-rail reveal" tabindex="0">
+    <div class="st-track">
+      <figure class="st-slide"><img src="{{slide-1.webp}}" alt="Sledeće nedelje u našem gradu otvara se nešto što ne želiš da propustiš" draggable="false"></figure>
+      <figure class="st-slide"><img src="{{slide-2.webp}}" alt="Prave napolitanske pice — najkvalitetniji italijanski sastojci, direktno iz Italije" draggable="false"></figure>
+      <figure class="st-slide"><img src="{{slide-3.webp}}" alt="Savršeno testo — 48h fermentacije, lagano, vazdušasto, autentično, hrskavo, prirodni sastojci, nizak procenat glutena" draggable="false"></figure>
+      <figure class="st-slide"><img src="{{slide-4.webp}}" alt="Autentične italijanske paste — pripremljene po italijanskoj tradiciji" draggable="false"></figure>
+      <figure class="st-slide"><img src="{{slide-5.webp}}" alt="Rižoto — kremasto, bogato, neodoljivo" draggable="false"></figure>
     </div>
+  </div>
+  <div class="wrap">
+    <div class="st-progress"><span></span></div>
+    <div class="st-foot"><span>Prevucite za još</span><a href="#meni" style="color:var(--red)">Pogledaj meni →</a></div>
   </div>
   <div class="marquee" aria-hidden="true"><div>
     <span>Pizza napoletana</span><span>buon appetito</span><span>48h testo</span><span>la dolce vita</span><span>Pasta fresca</span><span>mangia bene</span><span>Risotto</span><span>ciao Kruševac</span>
@@ -628,49 +548,55 @@ footer small{font-size:.74rem;opacity:.65}
   }catch(e){}
   document.getElementById('yr').textContent=new Date().getFullYear();
 
-  // stories: autoplay slides driven by the progress-bar animation
+  // stories: panorama rail that auto-advances one slide at a time, in order
   (function(){
     var root=document.getElementById('iskustvo');if(!root)return;
-    var texts=[].slice.call(root.querySelectorAll('.st-text'));
-    var media=[].slice.call(root.querySelectorAll('.st-media'));
-    var bars=root.querySelector('.st-bars');
-    var n=texts.length,cur=-1,userPaused=false,visible=false,leaveT;
-    texts.forEach(function(t,i){
-      var b=document.createElement('button');b.setAttribute('role','tab');
-      b.setAttribute('aria-label',(i+1)+'. '+t.dataset.label);b.appendChild(document.createElement('span'));
-      b.addEventListener('click',function(){go(i)});
-      b.querySelector('span').addEventListener('animationend',function(){if(i===cur)go(cur+1)});
-      bars.appendChild(b);
-    });
-    var btns=[].slice.call(bars.children);
-    function go(i){
-      i=(i+n)%n;if(i===cur)return;
-      var prev=cur;cur=i;
-      clearTimeout(leaveT);leaveT=setTimeout(function(){media.forEach(function(m){m.classList.remove('leaving')})},1250);
-      media.forEach(function(m,k){m.classList.remove('leaving');if(k===prev)m.classList.add('leaving');m.classList.toggle('on',k===i)});
-      texts.forEach(function(t,k){t.classList.toggle('on',k===i);t.setAttribute('aria-hidden',k!==i)});
-      btns.forEach(function(b,k){
-        b.classList.toggle('done',k<i);b.classList.remove('on');b.setAttribute('aria-selected',k===i);
-      });
-      void btns[i].offsetWidth;btns[i].classList.add('on');
+    var rail=root.querySelector('.st-rail'),slides=[].slice.call(root.querySelectorAll('.st-slide'));
+    var bar=root.querySelector('.st-progress span'),count=root.querySelector('.st-count b');
+    var n=slides.length,userPaused=false,hover=false,visible=false,timer=null;
+    function w(){return slides[0].getBoundingClientRect().width}
+    function max(){return rail.scrollWidth-rail.clientWidth}
+    function pad(){return parseFloat(getComputedStyle(rail).paddingLeft)||0}
+    function first(){return Math.min(n-1,Math.round(rail.scrollLeft/w()))}
+    function update(){
+      var m=max(),f=first(),vis=Math.max(1,Math.floor((rail.clientWidth-2*pad())/w()+.15));
+      var last=rail.scrollLeft>=m-4?n:Math.min(n,f+vis);
+      bar.style.width=(m>0?Math.min(1,rail.scrollLeft/m):1)*100+'%';
+      var z=function(k){return ('0'+k).slice(-2)};
+      count.textContent=last>f+1?z(f+1)+'–'+z(last):z(f+1);
     }
+    function go(i){
+      if(i<0)i=0;
+      var target=i*w();
+      if(i>=n||rail.scrollLeft>=max()-4&&target>rail.scrollLeft)target=0;
+      rail.scrollTo({left:Math.min(target,max()),behavior:'smooth'});
+    }
+    function paused(){return userPaused||hover||!visible||dragging}
+    function tick(){if(!paused())go(first()+1)}
     function sync(){root.classList.toggle('paused',userPaused||!visible)}
+    rail.addEventListener('scroll',update,{passive:true});
+    window.addEventListener('resize',update);
     root.querySelector('.st-play').addEventListener('click',function(){userPaused=!userPaused;sync()});
-    root.querySelectorAll('[data-dir]').forEach(function(b){b.addEventListener('click',function(){go(cur+ +b.dataset.dir)})});
-    root.querySelector('.st-hit.l').addEventListener('click',function(){go(cur-1)});
-    root.querySelector('.st-hit.r').addEventListener('click',function(){go(cur+1)});
-    var wrap=root.querySelector('.st-media-wrap');
-    wrap.addEventListener('mouseenter',function(){root.classList.add('paused')});
-    wrap.addEventListener('mouseleave',sync);
-    var x0=null;
-    wrap.addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});
-    wrap.addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40)go(cur+(dx<0?1:-1));x0=null});
-    root.addEventListener('keydown',function(e){if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){userPaused=true}
+    root.querySelectorAll('[data-dir]').forEach(function(b){b.addEventListener('click',function(){
+      var d=+b.dataset.dir,i=first();go(d>0?i+1:i-1);
+    })});
+    rail.addEventListener('mouseenter',function(){hover=true});
+    rail.addEventListener('mouseleave',function(){hover=false});
+    rail.addEventListener('touchstart',function(){hover=true},{passive:true});
+    rail.addEventListener('touchend',function(){setTimeout(function(){hover=false},2500)});
+    rail.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){e.preventDefault();go(first()+1)}if(e.key==='ArrowLeft'){e.preventDefault();go(first()-1)}});
+    // mouse drag
+    var dragging=false,sx=0,sl=0,moved=false;
+    rail.addEventListener('pointerdown',function(e){if(e.pointerType!=='mouse')return;dragging=true;moved=false;sx=e.clientX;sl=rail.scrollLeft;rail.setPointerCapture(e.pointerId)});
+    rail.addEventListener('pointermove',function(e){if(!dragging)return;var dx=e.clientX-sx;if(Math.abs(dx)>3){moved=true;rail.classList.add('drag')}rail.scrollLeft=sl-dx});
+    function end(){if(!dragging)return;dragging=false;rail.classList.remove('drag');if(moved){var i=Math.round(rail.scrollLeft/w());rail.scrollTo({left:Math.min(i*w(),max()),behavior:'smooth'})}}
+    rail.addEventListener('pointerup',end);rail.addEventListener('pointercancel',end);
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)userPaused=true;
     if('IntersectionObserver' in window){
       new IntersectionObserver(function(es){visible=es[0].isIntersecting;sync()},{threshold:.3}).observe(root);
     }else visible=true;
-    go(0);sync();
+    timer=setInterval(tick,3500);
+    update();sync();
   })();
 
   var els=document.querySelectorAll('.reveal');
