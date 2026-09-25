@@ -330,9 +330,9 @@ footer .logo-sm{width:96px;height:96px;margin:0 auto 26px;background:var(--i-log
 footer small{font-size:.74rem;opacity:.65}
 
 /* reveal */
-.reveal{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s ease}
-.reveal.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.marquee div{animation:none!important}.hero .shot i,.notch i{animation:none}.hero.drop .inner>*{animation:none}html{scroll-behavior:auto}}
+/* scroll-synced reveal: JS sets opacity/transform from scroll position (see "scroll reveal") */
+.sr{will-change:transform,opacity}
+@media (prefers-reduced-motion:reduce){.marquee div{animation:none!important}.hero .shot i,.notch i{animation:none}.hero.drop .inner>*{animation:none}html{scroll-behavior:auto}}
 
 /* mobile call bar */
 .mcall{display:none}
@@ -445,7 +445,7 @@ footer small{font-size:.74rem;opacity:.65}
       <button aria-label="Sledeće" data-dir="1"><svg viewBox="0 0 50 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M0 7h48M42 1l6 6-6 6"/></svg></button>
     </div>
   </div>
-  <div class="dishes reveal" id="dishes">
+  <div class="dishes" id="dishes">
   <div class="track" id="track">
     <article class="dish" tabindex="0" role="button" aria-label="Pogledaj: Parma e Bufala" data-img="var(--i-pizza)" data-pos=""><div class="bg" style="background-image:var(--i-pizza);"></div><span class="zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5M11 8v6M8 11h6"/></svg></span><div class="cap"><h3>Parma e Bufala</h3><p>sa pelatom, mocarelom, pršutom, rukolom, bufalom, čeri paradajzom i parmezanom</p></div></article>
     <article class="dish" tabindex="0" role="button" aria-label="Pogledaj: Biftek karpaćo" data-img="var(--i-h2)" data-pos=""><div class="bg" style="background-image:var(--i-h2);"></div><span class="zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5M11 8v6M8 11h6"/></svg></span><div class="cap"><h3>Biftek karpaćo</h3><p>biftek, rukola, puter, kapar, hleb, parmezan listići, maslinovo ulje</p></div></article>
@@ -476,8 +476,8 @@ footer small{font-size:.74rem;opacity:.65}
       </div>
     </div>
     <div class="photos">
-      <figure class="bg reveal" style="background-image:var(--i-pizza-detail)"><figcaption>Parma e Bufala</figcaption></figure>
-      <figure class="bg reveal" style="background-image:var(--i-sendvic)"><figcaption>Sendvič sa šunkom i cezar dresingom</figcaption></figure>
+      <figure class="bg" style="background-image:var(--i-pizza-detail)"><figcaption>Parma e Bufala</figcaption></figure>
+      <figure class="bg" style="background-image:var(--i-sendvic)"><figcaption>Sendvič sa šunkom i cezar dresingom</figcaption></figure>
     </div>
   </div>
 </section>
@@ -490,7 +490,7 @@ footer small{font-size:.74rem;opacity:.65}
     </div>
     <a class="btn btn-red st-menu" href="#meni">Pogledaj meni <span aria-hidden="true">→</span></a>
   </div>
-  <div class="st-rail reveal">
+  <div class="st-rail">
     <div class="st-track">
       <figure class="st-slide"><img src="{{slide-1.webp}}" alt="Sledeće nedelje u našem gradu otvara se nešto što ne želiš da propustiš" draggable="false"></figure>
       <figure class="st-slide"><img src="{{slide-2.webp}}" alt="Prave napolitanske pice — najkvalitetniji italijanski sastojci, direktno iz Italije" draggable="false"></figure>
@@ -545,7 +545,7 @@ footer small{font-size:.74rem;opacity:.65}
     <p class="intro reveal">Tradicionalna italijanska jela koje za Vas sprema kuvar iz Italije Federiko Carbone.</p>
 
     <div class="cols">
-      <div class="col reveal">
+      <div class="col">
         <h3>Topla predjela</h3><div class="rule"></div>
         <div class="item"><div class="row"><span class="name">Pohovani patlidžan sa paradajz sosom i mozzarellom</span><span class="price">540</span></div></div>
         <div class="item"><div class="row"><span class="name">Pohovani vrganji</span><span class="price">790</span></div><p class="desc">sa osvežavajućim sosom</p></div>
@@ -553,14 +553,14 @@ footer small{font-size:.74rem;opacity:.65}
         <div class="item"><div class="row"><span class="name">Brusketi sa dimljenim lososom</span><span class="price">590</span></div></div>
       </div>
 
-      <div class="col mid reveal">
+      <div class="col mid">
         <div class="pic bg" style="background-image:var(--i-pizza-crust)"></div>
         <h3>Rižoto</h3><div class="rule"></div>
         <div class="item"><div class="row"><span class="name">Rižoto sa šafranom, parmezanom i straćatelom</span><span class="price">1.250</span></div><p class="desc">šafran, parmezan, straćatela</p></div>
         <div class="item"><div class="row"><span class="name">Rižoto losos i gambori</span><span class="price">1.700</span></div><p class="desc">beli luk, filet losos, gambori, puter, maslinovo ulje, čeri paradajz</p><span class="tagp">POSNO</span></div>
       </div>
 
-      <div class="col reveal">
+      <div class="col">
         <h3>Paste</h3><div class="rule"></div>
         <div class="item"><div class="row"><span class="name">Aglio olio e peperoncino</span><span class="price">800</span></div><p class="desc">lingvini, beli luk, maslinovo ulje, peperoncino, puter</p><span class="tagp">MOŽE POSNO</span></div>
         <div class="item"><div class="row"><span class="name">Aglio olio peperoncino sa gamborima</span><span class="price">1.150</span></div><p class="desc">lingvini, beli luk, maslinovo ulje, peperoncino, gambori, puter</p><span class="tagp">MOŽE POSNO</span></div>
@@ -748,11 +748,45 @@ footer small{font-size:.74rem;opacity:.65}
     setTimeout(function(){setInterval(function(){show((cur+1)%layers.length)},5000)},3400);
   })();
 
-  var els=document.querySelectorAll('.reveal');
-  if('IntersectionObserver' in window){
-    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.1});
-    els.forEach(function(el){io.observe(el)});
-  }else els.forEach(function(el){el.classList.add('in')});
+  // scroll reveal: tied to scroll position (scrubs back when scrolling up).
+  // Titles/blocks rise in; photos drop in from above one after another.
+  (function(){
+    var items=[];
+    function add(el,kind,delay,order){el.classList.add('sr');items.push({el:el,kind:kind,delay:delay||0,order:order})}
+    document.querySelectorAll('.reveal').forEach(function(el){add(el,'rise',0)});
+    var groups=[['#track .dish','x'],['.st-track .st-slide','x'],['.story .photos figure','dom'],['.cols .col','dom'],['.grid-ig a','dom']];
+    groups.forEach(function(g){
+      [].slice.call(document.querySelectorAll(g[0])).forEach(function(el,i){add(el,'drop',.12,g[1]==='x'?'x':i)});
+    });
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    var ticking=false;
+    function update(){
+      ticking=false;
+      var vh=window.innerHeight;
+      for(var k=0;k<items.length;k++){
+        var it=items[k],r=it.el.getBoundingClientRect();
+        if(r.bottom<-200&&it.done)continue;
+        var order=it.order;
+        if(order==='x'){order=Math.max(0,Math.floor((r.left+r.width*.5)/Math.max(1,r.width)))}
+        var raw=(vh-r.top)/vh;
+        var p=Math.min(1,Math.max(0,(raw-.04-it.delay-order*.07)/.28));
+        var e=1-Math.pow(1-p,3);
+        if(it.kind==='drop'){
+          it.el.style.transform='translate3d(0,'+(-(1-e)*140).toFixed(1)+'px,0)';
+        }else{
+          it.el.style.transform='translate3d(0,'+((1-e)*50).toFixed(1)+'px,0)';
+        }
+        it.el.style.opacity=e.toFixed(3);
+        it.done=p>=1;
+      }
+    }
+    function req(){if(!ticking){ticking=true;requestAnimationFrame(update)}}
+    window.addEventListener('scroll',req,{passive:true});
+    window.addEventListener('resize',req);
+    update();
+    // cards inside moving strips change x-position, keep their order fresh
+    setInterval(req,400);
+  })();
 })();
 </script>
 </body>
