@@ -39,6 +39,9 @@
   --i-sendvic-detail:url({{sendvic-detail.webp}});
   --i-chef:url({{chef.webp}});
   --i-hero:url({{hero-margherita.webp}});
+  --i-h2:url({{hero-karpaco.webp}});
+  --i-h3:url({{hero-tagliatelle.webp}});
+  --i-h4:url({{hero-salvia.webp}});
 
   --green:#1e3b31;
   --red:#c4432b;
@@ -105,9 +108,30 @@ header.open .burger span::after{top:0;transform:rotate(-45deg)}
 /* hero */
 .hero{position:relative;height:100svh;min-height:620px;display:grid;place-items:center;text-align:center;color:var(--white);overflow:hidden;background-color:var(--ink)}
 .hero .photo{position:absolute;inset:0;background:radial-gradient(ellipse 45% 60% at 22% 45%,rgba(184,146,87,.10),transparent 70%),#141312}
-.hero .shot{position:absolute;z-index:0;top:0;bottom:0;right:0;width:min(46vw,760px);overflow:hidden}
-.hero .shot::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#141312 0%,rgba(20,19,18,.8) 14%,rgba(20,19,18,.3) 32%,transparent 50%)}
-.hero .shot i{position:absolute;inset:0;background:var(--i-hero) center 62%/cover;transform:scale(1.02);animation:zoom 18s ease-out forwards}
+.hero .shot{position:absolute;z-index:0;top:0;bottom:0;right:0;width:min(46vw,760px);overflow:hidden;transition:opacity 1.6s ease}
+.hero.pre .shot{opacity:0}
+.hero .shot::after{content:"";position:absolute;inset:0;z-index:3;background:linear-gradient(90deg,#141312 0%,rgba(20,19,18,.8) 14%,rgba(20,19,18,.3) 32%,transparent 50%),linear-gradient(0deg,rgba(20,19,18,.75),transparent 38%)}
+.hero .shot i{position:absolute;inset:0;background:center/cover no-repeat;opacity:0;z-index:0;transition:opacity 1.4s ease}
+.hero .shot i.on{opacity:1;z-index:2;animation:heroZoom 7s ease-out forwards}
+.hero .shot i.off{opacity:1;z-index:1;transition:none}
+@keyframes heroZoom{from{transform:scale(1.14)}to{transform:scale(1.02)}}
+/* intro: black screen -> photo appears -> title drops in -> photos start changing */
+body.intro header,body.intro .mcall,.hero.pre .notch{opacity:0;pointer-events:none}
+header,.mcall,.notch{transition:opacity .8s ease}
+.hero.pre .inner>*{opacity:0;translate:0 -170px}
+.hero.drop .inner>*{animation:drop 1s cubic-bezier(.3,1.4,.5,1) both}
+.hero.drop .inner>:nth-child(2){animation-delay:.12s}
+.hero.drop .inner>:nth-child(3){animation-delay:.24s}
+.hero.drop .inner>:nth-child(4){animation-delay:.32s}
+.hero.drop .inner>:nth-child(5){animation-delay:.42s}
+.hero.drop .inner>:nth-child(6){animation-delay:.5s}
+@keyframes drop{from{opacity:0;translate:0 -170px}55%{opacity:1}to{opacity:1;translate:0 0}}
+.dish-cap{text-shadow:0 2px 12px rgba(0,0,0,.6);position:absolute;z-index:4;right:clamp(20px,3vw,48px);bottom:70px;text-align:right;max-width:340px;color:#fff;transition:opacity .6s ease,translate .6s ease}
+.dish-cap.hide{opacity:0;translate:0 10px}
+.hero.pre .dish-cap{opacity:0}
+.dish-cap small{display:block;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-bottom:6px}
+.dish-cap b{display:block;font-family:var(--serif);font-weight:400;font-size:1.6rem;line-height:1.15}
+.dish-cap span{display:block;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;opacity:.75;margin-top:6px;line-height:1.5}
 .hero .inner{justify-self:start;width:min(58%,860px);margin-left:max(0px,(100vw - 1400px)/2)}
 @keyframes zoom{to{transform:scale(1.12)}}
 .hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(18,16,14,.5),transparent 22%,transparent 72%,rgba(18,16,14,.55))}
@@ -283,7 +307,7 @@ footer small{font-size:.74rem;opacity:.65}
 /* reveal */
 .reveal{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s ease}
 .reveal.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.marquee div{animation:none!important}.hero .shot i,.notch i{animation:none}html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.marquee div{animation:none!important}.hero .shot i,.notch i{animation:none}.hero.drop .inner>*{animation:none}html{scroll-behavior:auto}}
 
 /* mobile call bar */
 .mcall{display:none}
@@ -291,7 +315,8 @@ footer small{font-size:.74rem;opacity:.65}
 @media (max-width:1000px){
   .hero .shot{width:100%}
   .hero .shot::after{background:linear-gradient(0deg,#141312,transparent 45%)}
-  .hero .shot i{background-position:center 55%;filter:brightness(.5)}
+  .hero .shot i{filter:brightness(.5)}
+  .dish-cap{display:none}
   .hero .inner{justify-self:center;width:100%;margin-left:0}
     .chef .grid{grid-template-columns:1fr;gap:60px}
   .chef .portrait{max-width:340px}
@@ -338,7 +363,7 @@ footer small{font-size:.74rem;opacity:.65}
 }
 </style>
 </head>
-<body>
+<body class="intro">
 
 <header>
   <div class="wrap nav">
@@ -365,9 +390,15 @@ footer small{font-size:.74rem;opacity:.65}
 </header>
 
 <main>
-<section class="hero" id="pocetna" style="padding:0">
+<section class="hero pre" id="pocetna" style="padding:0">
   <div class="photo bg" aria-hidden="true"></div>
-  <div class="shot" aria-hidden="true"><i></i></div>
+  <div class="shot" aria-hidden="true">
+    <i style="background-image:var(--i-hero);background-position:center 62%" data-name="Pizza Margherita" data-desc="napolitansko testo · 48h fermentacije"></i>
+    <i style="background-image:var(--i-h2)" data-name="Biftek karpaćo" data-desc="biftek, rukola, puter, kapar, parmezan listići, maslinovo ulje"></i>
+    <i style="background-image:var(--i-h3)" data-name="Pikantne tagliatelle sa biftekom" data-desc="tagliatelle, biftek, mix povrća, peperončini, sušeni paradajz"></i>
+    <i style="background-image:var(--i-h4);background-position:30% center" data-name="Salvia" data-desc="rikota, mocarela, gorgonzola, goveđa pršuta, rukola, čeri"></i>
+  </div>
+  <div class="dish-cap" aria-live="polite"><small>Iz naše kuhinje</small><b></b><span></span></div>
   <div class="inner">
     <span class="welcome">Benvenuti</span>
     <h1>MISTA OSTERIA</h1>
@@ -613,6 +644,29 @@ footer small{font-size:.74rem;opacity:.65}
     }
     var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(build,150)});
     Promise.all(orig.map(function(f){var i=f.querySelector('img');return i.decode?i.decode().catch(function(){}):0})).then(build);
+  })();
+
+  // hero intro: black -> photo -> title drops -> photos start rotating
+  (function(){
+    var hero=document.getElementById('pocetna');if(!hero)return;
+    var layers=[].slice.call(hero.querySelectorAll('.shot i')),cap=hero.querySelector('.dish-cap');
+    var cur=0;
+    function caption(i){
+      cap.classList.add('hide');
+      setTimeout(function(){cap.querySelector('b').textContent=layers[i].dataset.name;cap.querySelector('span').textContent=layers[i].dataset.desc;cap.classList.remove('hide')},450);
+    }
+    function show(i){
+      var prev=layers[cur];
+      if(prev!==layers[i]){prev.classList.remove('on');prev.classList.add('off');setTimeout(function(){prev.classList.remove('off')},1500)}
+      layers[i].classList.remove('off');void layers[i].offsetWidth;layers[i].classList.add('on');cur=i;caption(i);
+    }
+    var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function land(){hero.classList.remove('pre');hero.classList.add('drop');document.body.classList.remove('intro')}
+    layers[0].classList.add('on');cap.querySelector('b').textContent=layers[0].dataset.name;cap.querySelector('span').textContent=layers[0].dataset.desc;
+    if(reduce){land();return}
+    setTimeout(function(){hero.classList.add('lit');hero.querySelector('.shot').style.opacity=1},350);
+    setTimeout(land,1700);
+    setTimeout(function(){setInterval(function(){show((cur+1)%layers.length)},5000)},3400);
   })();
 
   var els=document.querySelectorAll('.reveal');
