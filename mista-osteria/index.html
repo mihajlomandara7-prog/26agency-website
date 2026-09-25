@@ -166,7 +166,9 @@ section{padding:120px 0}
 .arrows button:hover{transform:translateX(3px)}
 .arrows button:first-child:hover{transform:translateX(-3px)}
 .arrows svg{width:50px;height:14px}
-.dishes{overflow:hidden;padding:6px 0}
+.dishes{overflow:hidden;padding:6px 0;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.dishes.dragging{cursor:grabbing}
+.dishes.dragging .dish{pointer-events:none}
 .track{display:flex;width:max-content;will-change:transform}
 .dish{flex:0 0 clamp(250px,24vw,300px);margin-right:22px;aspect-ratio:3/3.6;position:relative;overflow:hidden;color:var(--white);cursor:pointer;outline-offset:4px}
 .dish:focus-visible{outline:2px solid var(--red)}
@@ -676,7 +678,7 @@ footer small{font-size:.74rem;opacity:.65}
       anim=track.animate([{transform:'translate3d(0,0,0)'},{transform:'translate3d('+(-S)+'px,0,0)'}],{duration:D,iterations:Infinity,easing:'linear'});
       anim.currentTime=p*D;state();
     }
-    function state(){if(!anim)return;var stop=hover||lbOpen||tw||held;if(stop&&anim.playState==='running')anim.pause();if(!stop&&anim.playState!=='running')anim.play()}
+    function state(){if(!anim)return;var stop=hover||lbOpen||tw||held||drag;if(stop&&anim.playState==='running')anim.pause();if(!stop&&anim.playState!=='running')anim.play()}
     function norm(t){return ((t%D)+D)%D}
     wrap.addEventListener('mouseenter',function(){hover=true;state()});
     wrap.addEventListener('mouseleave',function(){hover=false;state()});
@@ -692,8 +694,39 @@ footer small{font-size:.74rem;opacity:.65}
     function fill(i){cur=(i+n)%n;var d=orig[cur];lb.querySelector('.img').style.cssText='background-image:'+d.dataset.img+';';lb.querySelector('h3').textContent=d.querySelector('h3').textContent;lb.querySelector('p').textContent=d.querySelector('p').textContent}
     function open(i){last=document.activeElement;fill(i);lb.classList.add('open');lb.setAttribute('aria-hidden','false');lbOpen=true;state();document.body.style.overflow='hidden';lb.querySelector('.x').focus()}
     function close(){lb.classList.remove('open');lb.setAttribute('aria-hidden','true');lbOpen=false;state();document.body.style.overflow='';if(last)last.focus()}
+    // drag / swipe: move the strip by hand (mouse "grab" on desktop, finger on phone),
+    // with a little momentum on release; a click without dragging still opens the dish.
+    var drag=false,moved=false,sx=0,st=0,lx=0,lt=0,vel=0,resumeT=null;
+    wrap.addEventListener('pointerdown',function(e){
+      if(e.button>0)return;
+      drag=true;moved=false;tw=null;sx=lx=e.clientX;lt=performance.now();vel=0;st=anim.currentTime;state();
+      clearTimeout(resumeT);
+    });
+    window.addEventListener('pointermove',function(e){
+      if(!drag)return;
+      var dx=e.clientX-sx;
+      if(!moved&&Math.abs(dx)>6){moved=true;wrap.classList.add('dragging');try{wrap.setPointerCapture(e.pointerId)}catch(_){}}
+      if(moved){
+        anim.currentTime=norm(st-dx/S*D);
+        var now=performance.now();vel=(e.clientX-lx)/Math.max(1,now-lt);lx=e.clientX;lt=now;
+      }
+    });
+    function release(e){
+      if(!drag)return;drag=false;
+      setTimeout(function(){wrap.classList.remove('dragging')},0);
+      if(moved){
+        var v=vel*1000/S*D; // px/ms -> animation ms per ms
+        (function glide(){
+          if(drag)return;
+          v*=.94;if(Math.abs(v)<.02){if(e&&e.pointerType!=='mouse'){resumeT=setTimeout(state,1200)}else state();return}
+          anim.currentTime=norm(anim.currentTime-v*16/1000);requestAnimationFrame(glide);
+        })();
+        tw=true;setTimeout(function(){tw=null;state()},900);
+      }else state();
+    }
+    window.addEventListener('pointerup',release);window.addEventListener('pointercancel',release);
     track.querySelectorAll('.dish').forEach(function(d,i){
-      d.addEventListener('click',function(){open(i%n)});
+      d.addEventListener('click',function(e){if(moved){e.preventDefault();return}open(i%n)});
       d.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open(i%n)}});
     });
     lb.querySelector('.x').addEventListener('click',close);
@@ -739,7 +772,7 @@ footer small{font-size:.74rem;opacity:.65}
 
   // live update: when a new version is deployed, open tabs reload themselves
   (function(){
-    var V='5ef168e882';
+    var V='08c132eb33';
     if(!/^https?:$/.test(location.protocol))return;
     function check(){
       if(document.hidden)return;
