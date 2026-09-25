@@ -267,12 +267,11 @@ section{padding:120px 0}
 @keyframes mq{to{transform:translateX(-50%)}}
 
 /* chef: full-height split, photo edge-to-edge on the left */
-.chef{background:var(--ink);color:rgba(255,255,255,.78);padding:0;position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);min-height:100svh}
-.chef .pcol{position:relative;min-height:100svh;overflow:hidden}
-.chef .pcol .ph{position:absolute;inset:0;background:var(--i-chef) center 18%/cover no-repeat;transform:scale(1.06);transition:transform 2.4s cubic-bezier(.2,.7,.2,1)}
-.chef .pcol.in .ph{transform:scale(1)}
-.chef .pcol::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 55%,var(--ink)),linear-gradient(0deg,rgba(28,28,26,.55),transparent 30%)}
-.chef .badge{position:absolute;right:28px;bottom:48px;width:128px;height:128px;z-index:2;background:var(--red);border-radius:50%;display:grid;place-items:center;color:#fff;box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.chef{background:var(--ink);color:rgba(255,255,255,.78);padding:0;position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);min-height:92svh;align-items:center}
+.chef .pcol{position:relative;height:min(78svh,760px);margin:clamp(50px,7vw,100px) 0 clamp(50px,7vw,100px) clamp(20px,7vw,120px);max-width:500px;justify-self:end;width:100%}
+.chef .pcol::before{content:"";position:absolute;inset:-16px 16px 16px -16px;border:1.5px solid var(--gold);z-index:0}
+.chef .pcol .ph{position:absolute;inset:0;z-index:1;background:var(--i-chef) center 25%/cover no-repeat;box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+.chef .badge{position:absolute;right:-42px;bottom:40px;width:128px;height:128px;z-index:2;background:var(--red);border-radius:50%;display:grid;place-items:center;color:#fff;box-shadow:0 14px 30px rgba(0,0,0,.35)}
 .chef .badge svg{position:absolute;inset:0;width:100%;height:100%;animation:badgespin 22s linear infinite}
 .chef .badge b{font-family:var(--script);font-weight:400;font-size:2.2rem;line-height:1}
 @keyframes badgespin{to{transform:rotate(360deg)}}
@@ -382,9 +381,8 @@ footer small{font-size:.74rem;opacity:.65}
   .dish-cap{display:none}
   .hero .inner{justify-self:center;width:100%;margin-left:0}
     .chef{grid-template-columns:1fr;min-height:0}
-  .chef .pcol{min-height:78svh}
-  .chef .pcol::after{background:linear-gradient(0deg,var(--ink),transparent 40%)}
-  .chef .badge{right:18px;bottom:28px;width:104px;height:104px}
+  .chef .pcol{height:min(110vw,520px);margin:60px 36px 50px 36px;justify-self:stretch;max-width:none;width:auto}
+  .chef .badge{right:-22px;bottom:28px;width:100px;height:100px}
   .chef .tcol{padding:10px 20px 80px}
   .links,.icons,.nav .reserve-btn{display:none}
   .burger{display:block;margin-left:10px}
@@ -815,7 +813,7 @@ window.mT=function(s){return window.mistaLang==='en'&&window.MISTA_EN[s]||s};
 
   // live update: when a new version is deployed, open tabs reload themselves
   (function(){
-    var V='7086b78db2';
+    var V='ca5e7eaa85';
     if(!/^https?:$/.test(location.protocol))return;
     function check(){
       if(document.hidden)return;
