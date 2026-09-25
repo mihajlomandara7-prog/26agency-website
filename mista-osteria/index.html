@@ -737,6 +737,24 @@ footer small{font-size:.74rem;opacity:.65}
     Promise.all(orig.map(function(f){var i=f.querySelector('img');return i.decode?i.decode().catch(function(){}):0})).then(build);
   })();
 
+  // live update: when a new version is deployed, open tabs reload themselves
+  (function(){
+    var V='5ef168e882';
+    if(!/^https?:$/.test(location.protocol))return;
+    function check(){
+      if(document.hidden)return;
+      fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){
+        if(j&&j.v&&j.v!==V){
+          // guard: if we already reloaded for this version and still got the old page, don't loop
+          try{if(sessionStorage.getItem('mista-tried')===j.v)return;sessionStorage.setItem('mista-tried',j.v);sessionStorage.setItem('mista-reload',JSON.stringify({y:window.scrollY}))}catch(e){}
+          location.replace(location.pathname+'?v='+j.v+location.hash);
+        }
+      }).catch(function(){});
+    }
+    setInterval(check,15000);
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)check()});
+  })();
+
   // hero intro: black -> photo -> title drops -> photos start rotating
   (function(){
     var hero=document.getElementById('pocetna');if(!hero)return;
@@ -760,8 +778,16 @@ footer small{font-size:.74rem;opacity:.65}
       setTimeout(land,1700);
       setTimeout(function(){setInterval(function(){show((cur+1)%layers.length)},5000)},3400);
     }
-    // show the logo loader until the page (and its images) are ready, at least ~1.2s
-    var loader=document.getElementById('loader'),t0=Date.now(),started=false;
+    // show the logo loader until the page (and its images) are ready, at least ~1.2s.
+    // After an automatic reload (new version deployed) skip loader + intro and
+    // return to the same scroll position.
+    var loader=document.getElementById('loader'),t0=Date.now(),started=false,back=null;
+    try{back=JSON.parse(sessionStorage.getItem('mista-reload')||'null');sessionStorage.removeItem('mista-reload')}catch(e){}
+    if(back){
+      loader.style.transition='none';loader.classList.add('gone');reduce=true;start();started=true;
+      requestAnimationFrame(function(){window.scrollTo(0,back.y||0)});
+      window.addEventListener('load',function(){window.scrollTo(0,back.y||0)});
+    }
     function done(){
       if(started)return;started=true;
       setTimeout(function(){loader.classList.add('gone');setTimeout(start,450)},Math.max(0,1200-(Date.now()-t0)));
