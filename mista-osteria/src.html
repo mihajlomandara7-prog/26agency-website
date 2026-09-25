@@ -165,11 +165,9 @@ section{padding:120px 0}
 .st-ctrl button:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
 .st-ctrl svg{width:16px;height:16px}
 .st-ctrl .pl{display:none}.stories.paused .st-ctrl .pa{display:none}.stories.paused .st-ctrl .pl{display:block}
-.st-rail{overflow-x:auto;scrollbar-width:none;padding:0 max(20px,(100vw - 1180px)/2);scroll-padding:0 max(20px,(100vw - 1180px)/2);cursor:grab;-webkit-overflow-scrolling:touch}
-.st-rail::-webkit-scrollbar{display:none}
-.st-rail.drag{scroll-snap-type:none;cursor:grabbing}
-.st-rail.drag img{pointer-events:none}
-.st-track{display:flex;width:max-content;box-shadow:0 30px 60px -30px rgba(0,0,0,.35)}
+.st-rail{overflow:hidden;cursor:grab;touch-action:pan-y;user-select:none}
+.st-rail.drag{cursor:grabbing}
+.st-track{display:flex;width:max-content;will-change:transform}
 .st-slide{flex:0 0 auto;width:clamp(280px,30vw,430px);aspect-ratio:4/5;scroll-snap-align:start;margin:0;overflow:hidden;background:#fff}
 .st-slide img{width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none}
 .st-progress{margin-top:34px;height:2px;background:#ece6de;position:relative}
@@ -286,7 +284,6 @@ footer small{font-size:.74rem;opacity:.65}
   .st-ctrl{align-self:stretch}
   .st-count{margin-right:auto;text-align:left}
   .st-slide{width:82vw}
-  .st-rail{scroll-snap-type:x mandatory}
   .stories{padding-top:80px}
   .marquee{margin-top:60px}
 }
@@ -396,7 +393,7 @@ footer small{font-size:.74rem;opacity:.65}
       <h2 class="offset-title"><span>Od testa</span><span class="l2"><em class="tag">Korak po korak</em>do tanjira</span></h2>
     </div>
     <div class="st-ctrl">
-      <span class="st-count" aria-live="polite"><b>01</b> / 05</span>
+      <span class="st-count"><b>01</b> / 06</span>
       <button data-dir="-1" aria-label="Prethodna slika"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
       <button class="st-play" aria-label="Pauziraj ili pusti"><svg class="pa" viewBox="0 0 12 12" fill="currentColor"><rect x="2" y="1" width="3" height="10"/><rect x="7" y="1" width="3" height="10"/></svg><svg class="pl" viewBox="0 0 12 12" fill="currentColor"><path d="M2 1l9 5-9 5z"/></svg></button>
       <button data-dir="1" aria-label="Sledeća slika"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
@@ -409,11 +406,12 @@ footer small{font-size:.74rem;opacity:.65}
       <figure class="st-slide"><img src="{{slide-3.webp}}" alt="Savršeno testo — 48h fermentacije, lagano, vazdušasto, autentično, hrskavo, prirodni sastojci, nizak procenat glutena" draggable="false"></figure>
       <figure class="st-slide"><img src="{{slide-4.webp}}" alt="Autentične italijanske paste — pripremljene po italijanskoj tradiciji" draggable="false"></figure>
       <figure class="st-slide"><img src="{{slide-5.webp}}" alt="Rižoto — kremasto, bogato, neodoljivo" draggable="false"></figure>
+      <figure class="st-slide"><img src="{{slide-6.webp}}" alt="Premium steakovi — pažljivo birani komadi, pripremljeno do savršenstva" draggable="false"></figure>
     </div>
   </div>
   <div class="wrap">
     <div class="st-progress"><span></span></div>
-    <div class="st-foot"><span>Prevucite za još</span><a href="#meni" style="color:var(--red)">Pogledaj meni →</a></div>
+    <div class="st-foot"><span>Prevucite ili zastanite mišem</span><a href="#meni" style="color:var(--red)">Pogledaj meni →</a></div>
   </div>
   <div class="marquee" aria-hidden="true"><div>
     <span>Pizza napoletana</span><span>buon appetito</span><span>48h testo</span><span>la dolce vita</span><span>Pasta fresca</span><span>mangia bene</span><span>Risotto</span><span>ciao Kruševac</span>
@@ -548,55 +546,52 @@ footer small{font-size:.74rem;opacity:.65}
   }catch(e){}
   document.getElementById('yr').textContent=new Date().getFullYear();
 
-  // stories: panorama rail that auto-advances one slide at a time, in order
+  // stories: slides drift continuously in an endless loop (JS so drag/arrows/pause all work)
   (function(){
     var root=document.getElementById('iskustvo');if(!root)return;
-    var rail=root.querySelector('.st-rail'),slides=[].slice.call(root.querySelectorAll('.st-slide'));
+    var rail=root.querySelector('.st-rail'),track=root.querySelector('.st-track');
+    var orig=[].slice.call(track.children),n=orig.length;
+    // two extra copies so the strip never runs out while looping
+    for(var c=0;c<2;c++)orig.forEach(function(el){var k=el.cloneNode(true);k.setAttribute('aria-hidden','true');k.querySelector('img').alt='';track.appendChild(k)});
     var bar=root.querySelector('.st-progress span'),count=root.querySelector('.st-count b');
-    var n=slides.length,userPaused=false,hover=false,visible=false,timer=null;
-    function w(){return slides[0].getBoundingClientRect().width}
-    function max(){return rail.scrollWidth-rail.clientWidth}
-    function pad(){return parseFloat(getComputedStyle(rail).paddingLeft)||0}
-    function first(){return Math.min(n-1,Math.round(rail.scrollLeft/w()))}
-    function update(){
-      var m=max(),f=first(),vis=Math.max(1,Math.floor((rail.clientWidth-2*pad())/w()+.15));
-      var last=rail.scrollLeft>=m-4?n:Math.min(n,f+vis);
-      bar.style.width=(m>0?Math.min(1,rail.scrollLeft/m):1)*100+'%';
-      var z=function(k){return ('0'+k).slice(-2)};
-      count.textContent=last>f+1?z(f+1)+'–'+z(last):z(f+1);
+    var SPEED=38; // px per second
+    var pos=0,tween=null,userPaused=false,hover=false,visible=true,dragging=false,last=performance.now();
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){userPaused=true}
+    function w(){return orig[0].getBoundingClientRect().width}
+    function setW(){return w()*n}
+    function wrap(){var S=setW();while(pos<=-S)pos+=S;while(pos>0)pos-=S}
+    function render(){
+      wrap();track.style.transform='translate3d('+pos+'px,0,0)';
+      var S=setW(),f=Math.floor((-pos+w()*0.5)/w())%n;
+      bar.style.width=(-pos/S*100)+'%';
+      count.textContent=('0'+(f+1)).slice(-2);
     }
-    function go(i){
-      if(i<0)i=0;
-      var target=i*w();
-      if(i>=n||rail.scrollLeft>=max()-4&&target>rail.scrollLeft)target=0;
-      rail.scrollTo({left:Math.min(target,max()),behavior:'smooth'});
+    function frame(t){
+      var dt=Math.min(.05,(t-last)/1000);last=t;
+      if(tween){var k=Math.min(1,(t-tween.t0)/600),e=1-Math.pow(1-k,3);pos=tween.from+(tween.to-tween.from)*e;if(k>=1)tween=null}
+      else if(!(userPaused||hover||dragging||!visible))pos-=SPEED*dt;
+      render();requestAnimationFrame(frame);
     }
-    function paused(){return userPaused||hover||!visible||dragging}
-    function tick(){if(!paused())go(first()+1)}
-    function sync(){root.classList.toggle('paused',userPaused||!visible)}
-    rail.addEventListener('scroll',update,{passive:true});
-    window.addEventListener('resize',update);
+    function nudge(d){
+      var W=w(),target=(Math.round(pos/W)-d)*W;
+      if(tween)target=tween.to-d*W;
+      tween={from:pos,to:target,t0:performance.now()};
+    }
+    function sync(){root.classList.toggle('paused',userPaused)}
     root.querySelector('.st-play').addEventListener('click',function(){userPaused=!userPaused;sync()});
-    root.querySelectorAll('[data-dir]').forEach(function(b){b.addEventListener('click',function(){
-      var d=+b.dataset.dir,i=first();go(d>0?i+1:i-1);
-    })});
+    root.querySelectorAll('[data-dir]').forEach(function(b){b.addEventListener('click',function(){nudge(+b.dataset.dir)})});
     rail.addEventListener('mouseenter',function(){hover=true});
     rail.addEventListener('mouseleave',function(){hover=false});
-    rail.addEventListener('touchstart',function(){hover=true},{passive:true});
-    rail.addEventListener('touchend',function(){setTimeout(function(){hover=false},2500)});
-    rail.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){e.preventDefault();go(first()+1)}if(e.key==='ArrowLeft'){e.preventDefault();go(first()-1)}});
-    // mouse drag
-    var dragging=false,sx=0,sl=0,moved=false;
-    rail.addEventListener('pointerdown',function(e){if(e.pointerType!=='mouse')return;dragging=true;moved=false;sx=e.clientX;sl=rail.scrollLeft;rail.setPointerCapture(e.pointerId)});
-    rail.addEventListener('pointermove',function(e){if(!dragging)return;var dx=e.clientX-sx;if(Math.abs(dx)>3){moved=true;rail.classList.add('drag')}rail.scrollLeft=sl-dx});
-    function end(){if(!dragging)return;dragging=false;rail.classList.remove('drag');if(moved){var i=Math.round(rail.scrollLeft/w());rail.scrollTo({left:Math.min(i*w(),max()),behavior:'smooth'})}}
+    rail.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){e.preventDefault();nudge(1)}if(e.key==='ArrowLeft'){e.preventDefault();nudge(-1)}});
+    var sx=0,sp=0;
+    rail.addEventListener('pointerdown',function(e){dragging=true;tween=null;sx=e.clientX;sp=pos;rail.classList.add('drag');rail.setPointerCapture(e.pointerId)});
+    rail.addEventListener('pointermove',function(e){if(dragging){pos=sp+(e.clientX-sx)}});
+    function end(){if(!dragging)return;dragging=false;rail.classList.remove('drag')}
     rail.addEventListener('pointerup',end);rail.addEventListener('pointercancel',end);
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)userPaused=true;
     if('IntersectionObserver' in window){
-      new IntersectionObserver(function(es){visible=es[0].isIntersecting;sync()},{threshold:.3}).observe(root);
-    }else visible=true;
-    timer=setInterval(tick,3500);
-    update();sync();
+      new IntersectionObserver(function(es){visible=es[0].isIntersecting},{threshold:0}).observe(root);
+    }
+    sync();requestAnimationFrame(frame);
   })();
 
   var els=document.querySelectorAll('.reveal');
