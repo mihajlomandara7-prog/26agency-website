@@ -137,7 +137,9 @@ header,.mcall,.notch{transition:opacity .8s ease}
 .hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(18,16,14,.5),transparent 22%,transparent 72%,rgba(18,16,14,.55))}
 .hero .inner{position:relative;z-index:3;padding:0 20px}
 .hero .welcome{font-family:var(--script);color:var(--gold);font-size:clamp(4.4rem,11vw,8.2rem);line-height:.8;display:block;transform:translate(-6%,0) rotate(-5deg);text-shadow:0 4px 30px rgba(0,0,0,.35)}
-.hero h1{font-family:var(--sans);font-weight:800;letter-spacing:.24em;font-size:clamp(2rem,6vw,4.4rem);line-height:1;margin-top:-.28em;margin-right:-.24em;text-shadow:0 4px 30px rgba(0,0,0,.4)}
+.hero h1{position:relative;display:inline-block;margin-top:-.05em;line-height:1;text-shadow:0 4px 30px rgba(0,0,0,.35)}
+.hero h1 .m{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(4rem,10vw,8.6rem);letter-spacing:.04em;line-height:.9;margin-right:-.04em;-webkit-mask-image:linear-gradient(180deg,#000 45%,transparent 45%,transparent 67%,#000 67%);mask-image:linear-gradient(180deg,#000 45%,transparent 45%,transparent 67%,#000 67%)}
+.hero h1 .o{position:absolute;left:50%;top:56%;transform:translate(-50%,-50%);font-family:var(--sans);font-weight:600;font-size:clamp(.95rem,2.1vw,1.8rem);letter-spacing:.55em;padding-left:.55em;white-space:nowrap}
 .divider{display:flex;align-items:center;justify-content:center;gap:12px;margin:18px auto 14px;width:min(420px,80vw)}
 .divider::before,.divider::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.85)}
 .divider b{width:7px;height:7px;background:var(--gold);transform:rotate(45deg)}
@@ -158,13 +160,19 @@ section{padding:120px 0}
 .arrows button:hover{transform:translateX(3px)}
 .arrows button:first-child:hover{transform:translateX(-3px)}
 .arrows svg{width:50px;height:14px}
-.track{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 max(20px,(100vw - 1180px)/2);scroll-padding:0 max(20px,(100vw - 1180px)/2)}
-.track::-webkit-scrollbar{display:none}
-.dish{flex:0 0 clamp(250px,24vw,300px);aspect-ratio:3/3.6;position:relative;scroll-snap-align:start;overflow:hidden;color:var(--white)}
+.dishes{overflow:hidden;padding:6px 0}
+.track{display:flex;width:max-content;will-change:transform}
+.dish{flex:0 0 clamp(250px,24vw,300px);margin-right:22px;aspect-ratio:3/3.6;position:relative;overflow:hidden;color:var(--white);cursor:pointer;outline-offset:4px}
+.dish:focus-visible{outline:2px solid var(--red)}
+.dish .zoom{position:absolute;top:16px;right:16px;z-index:2;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--ink);display:grid;place-items:center;opacity:0;transform:scale(.8);transition:.3s}
+.dish .zoom svg{width:16px;height:16px}
+.dish:hover .zoom,.dish:focus-visible .zoom{opacity:1;transform:none}
+.dish.light::after{background:linear-gradient(transparent,rgba(247,238,230,.97) 55%)}
+.dish.light{color:var(--ink)}
 .dish .bg{position:absolute;inset:0;transition:transform .8s}
 .dish:hover .bg{transform:scale(1.06)}
-.dish::after{content:"";position:absolute;inset:40% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.72))}
-.dish .cap{position:absolute;left:22px;right:22px;bottom:20px;z-index:1}
+.dish::after{content:"";position:absolute;inset:40% 0 0;z-index:1;background:linear-gradient(transparent,rgba(0,0,0,.72))}
+.dish .cap{position:absolute;left:22px;right:22px;bottom:20px;z-index:2}
 .dish h3{font-family:var(--sans);font-weight:600;font-size:.84rem;letter-spacing:.12em;text-transform:uppercase}
 .dish p{font-size:.78rem;opacity:.85;line-height:1.5;margin-top:3px}
 .taste .foot{text-align:center;margin-top:60px}
@@ -181,6 +189,23 @@ section{padding:120px 0}
 .story .facts{display:flex;justify-content:center;gap:40px;margin-top:34px;padding-top:26px;border-top:1px solid #eee}
 .story .facts b{display:block;font-family:var(--serif);font-weight:400;font-size:1.9rem;color:var(--green);line-height:1.1}
 .story .facts span{font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:100;background:rgba(14,13,12,.94);display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);align-items:center;gap:40px;padding:60px clamp(20px,5vw,80px);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s}
+.lb.open{opacity:1;visibility:visible}
+.lb .img{height:min(78vh,760px);background:center/contain no-repeat;transform:scale(.96);transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.lb.open .img{transform:none}
+.lb .txt{color:#fff;max-width:420px}
+.lb .txt small{display:block;font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-bottom:14px}
+.lb .txt h3{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4vw,3.2rem);line-height:1.05;margin-bottom:16px}
+.lb .txt p{color:rgba(255,255,255,.75);font-size:1rem;margin-bottom:30px}
+.lb .x{position:absolute;top:22px;right:22px;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:none;color:#fff;font-size:1.6rem;line-height:1;cursor:pointer}
+.lb .x:hover{background:#fff;color:var(--ink)}
+.lb .nav{display:flex;gap:10px;margin-top:26px}
+.lb .nav button{width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:none;color:#fff;cursor:pointer;display:grid;place-items:center}
+.lb .nav button:hover{background:#fff;color:var(--ink)}
+.lb .nav svg{width:16px;height:16px}
+@media (max-width:800px){.lb{grid-template-columns:1fr;gap:20px;padding:70px 20px 30px;align-content:center}.lb .img{height:52vh}}
 
 /* stories: original Instagram carousel shown as one continuous panorama */
 .stories{padding:110px 0 0;overflow:hidden;position:relative}
@@ -353,11 +378,13 @@ footer small{font-size:.74rem;opacity:.65}
 @media (max-width:640px){
   .taste .top{flex-direction:column;align-items:flex-start}
   .arrows{align-self:flex-end}
-  .dish{flex-basis:76vw}
+  .dish{flex-basis:72vw}
   .visit .card{padding:40px 22px}
   .story .facts{gap:22px}
     .hero .sub{letter-spacing:.2em;margin-right:-.2em;font-size:.7rem}
-  .hero h1{letter-spacing:.16em;margin-right:-.16em}
+  .hero h1 .m{-webkit-mask-image:none;mask-image:none}
+  .hero h1 .o{top:auto;bottom:-1.5em;transform:translateX(-50%)}
+  .hero h1{margin-bottom:1.6em}
   .mcall{display:flex;position:fixed;left:14px;right:14px;bottom:14px;z-index:40;justify-content:center;background:var(--red);color:#fff;padding:15px;font-weight:700;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;box-shadow:0 10px 30px rgba(0,0,0,.3)}
   footer .bottom{padding-bottom:100px}
 }
@@ -401,7 +428,7 @@ footer small{font-size:.74rem;opacity:.65}
   <div class="dish-cap" aria-live="polite"><small>Iz naše kuhinje</small><b></b><span></span></div>
   <div class="inner">
     <span class="welcome">Benvenuti</span>
-    <h1>MISTA OSTERIA</h1>
+    <h1 aria-label="Mista Osteria"><span class="m" aria-hidden="true">MISTA</span><span class="o" aria-hidden="true">OSTERIA</span></h1>
     <div class="divider"><b></b></div>
     <p class="sub">Autentični italijanski ukusi</p>
     <a class="btn btn-white" href="tel:+381638124455">Rezerviši sto</a>
@@ -418,13 +445,16 @@ footer small{font-size:.74rem;opacity:.65}
       <button aria-label="Sledeće" data-dir="1"><svg viewBox="0 0 50 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M0 7h48M42 1l6 6-6 6"/></svg></button>
     </div>
   </div>
-  <div class="track reveal" id="track">
-    <article class="dish"><div class="bg" style="background-image:var(--i-pizza)"></div><div class="cap"><h3>Parma e Bufala</h3><p>pršut, bufala, rukola, čeri, parmezan</p></div></article>
-    <article class="dish"><div class="bg" style="background-image:var(--i-sendvic)"></div><div class="cap"><h3>Sendvič Cezar</h3><p>cotto šunka, mocarela, cezar dresing</p></div></article>
-    <article class="dish"><div class="bg" style="background-image:var(--i-pizza-crust)"></div><div class="cap"><h3>Napuljsko testo</h3><p>pečeno na visokoj temperaturi</p></div></article>
-    <article class="dish"><div class="bg" style="background-image:var(--i-menu);background-position:center 30%"></div><div class="cap" style="color:var(--ink)"><h3>Mista Special</h3><p>jela kuvara Federika Carbonea</p></div></article>
-    <article class="dish"><div class="bg" style="background-image:var(--i-pizza-detail)"></div><div class="cap"><h3>Sveže namirnice</h3><p>rukola, čeri paradajz, bufala</p></div></article>
-    <article class="dish"><div class="bg" style="background-image:var(--i-sendvic-detail)"></div><div class="cap"><h3>Za doručak i ručak</h3><p>svakog dana od 08h</p></div></article>
+  <div class="dishes reveal" id="dishes">
+  <div class="track" id="track">
+    <article class="dish" tabindex="0" role="button" aria-label="Pogledaj: Parma e Bufala" data-img="var(--i-pizza)" data-pos=""><div class="bg" style="background-image:var(--i-pizza);"></div><span class="zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5M11 8v6M8 11h6"/></svg></span><div class="cap"><h3>Parma e Bufala</h3><p>sa pelatom, mocarelom, pršutom, rukolom, bufalom, čeri paradajzom i parmezanom</p></div></article>
+    <article class="dish" tabindex="0" role="button" aria-label="Pogledaj: Biftek karpaćo" data-img="var(--i-h2)" data-pos=""><div class="bg" style="background-image:var(--i-h2);"></div><span class="zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5M11 8v6M8 11h6"/></svg></span><div class="cap"><h3>Biftek karpaćo</h3><p>biftek, rukola, puter, kapar, hleb, parmezan listići, maslinovo ulje</p></div></article>
+    <article class="dish" tabindex="0" role="button" aria-label="Pogledaj: Sendvič Cezar" data-img="var(--i-sendvic)" data-pos=""><div class="bg" style="background-image:var(--i-sendvic);"></div><span class="zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5M11 8v6M8 11h6"/></svg></span><div class="cap"><h3>Sendvič Cezar</h3><p>cezar dresing, mocarela, cotto šunka, rukola, sveži čeri, masline, parmezan</p></div></article>
+    <article class="dish" tabindex="0" role="button" aria-label="Pogledaj: Pikantne tagliatelle sa biftekom" data-img="var(--i-h3)" data-pos=""><div class="bg" style="background-image:var(--i-h3);"></div><span class="zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5M11 8v6M8 11h6"/></svg></span><div class="cap"><h3>Pikantne tagliatelle sa biftekom</h3><p>tagliatelle, biftek, mix povrća, peperončini, maslinovo ulje, sušeni paradajz</p></div></article>
+    <article class="dish" tabindex="0" role="button" aria-label="Pogledaj: Salvia" data-img="var(--i-h4)" data-pos="background-position:30% center;"><div class="bg" style="background-image:var(--i-h4);background-position:30% center;"></div><span class="zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5M11 8v6M8 11h6"/></svg></span><div class="cap"><h3>Salvia</h3><p>rikota podloga, mocarela, gorgonzola, goveđa pršuta, rukola, čeri</p></div></article>
+    <article class="dish light" tabindex="0" role="button" aria-label="Pogledaj: Mista Special" data-img="var(--i-menu)" data-pos="background-position:center 30%;"><div class="bg" style="background-image:var(--i-menu);background-position:center 30%;"></div><span class="zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5M11 8v6M8 11h6"/></svg></span><div class="cap"><h3>Mista Special</h3><p>tradicionalna italijanska jela kuvara Federika Carbonea</p></div></article>
+    <article class="dish" tabindex="0" role="button" aria-label="Pogledaj: Pizza Margherita" data-img="var(--i-hero)" data-pos="background-position:center 62%;"><div class="bg" style="background-image:var(--i-hero);background-position:center 62%;"></div><span class="zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5M11 8v6M8 11h6"/></svg></span><div class="cap"><h3>Pizza Margherita</h3><p>napolitansko testo, 48h fermentacije</p></div></article>
+  </div>
   </div>
   <div class="wrap foot reveal">
     <p>Od hrskave pice do domaće paste — svako jelo pripremamo s ljubavlju. Pogledajte meni i pronađite svoj ukus.</p>
@@ -597,6 +627,21 @@ footer small{font-size:.74rem;opacity:.65}
 
 <a class="mcall" href="tel:+381638124455">Pozovi i rezerviši</a>
 
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Jelo" aria-hidden="true">
+  <button class="x" aria-label="Zatvori">×</button>
+  <div class="img"></div>
+  <div class="txt">
+    <small>Iz naše kuhinje</small>
+    <h3></h3>
+    <p></p>
+    <a class="btn btn-red" href="#meni" style="border-radius:40px">Pogledaj meni</a>
+    <div class="nav">
+      <button data-d="-1" aria-label="Prethodno jelo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button data-d="1" aria-label="Sledeće jelo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function(){
   var header=document.querySelector('header');
@@ -607,14 +652,48 @@ footer small{font-size:.74rem;opacity:.65}
   burger.addEventListener('click',function(){var o=header.classList.toggle('open');burger.setAttribute('aria-expanded',o)});
   document.querySelectorAll('.mpanel a').forEach(function(a){a.addEventListener('click',function(){header.classList.remove('open');burger.setAttribute('aria-expanded',false)})});
 
-  // carousel arrows
-  var track=document.getElementById('track');
-  document.querySelectorAll('.arrows button').forEach(function(b){
-    b.addEventListener('click',function(){
-      var card=track.querySelector('.dish');var step=card.getBoundingClientRect().width+22;
-      track.scrollBy({left:step*+b.dataset.dir,behavior:'smooth'});
+  // dishes: drift right-to-left forever; hover pauses, click opens the dish
+  (function(){
+    var wrap=document.getElementById('dishes'),track=document.getElementById('track');if(!track)return;
+    var orig=[].slice.call(track.children),n=orig.length;
+    for(var c=0;c<2;c++)orig.forEach(function(el){var k=el.cloneNode(true);k.setAttribute('aria-hidden','true');k.tabIndex=-1;track.appendChild(k)});
+    var SPEED=40,anim=null,D=1,S=1,hover=false,lbOpen=false,tw=null;
+    function build(){
+      var p=anim?(anim.currentTime%D)/D:0;
+      S=track.scrollWidth/3;D=S/SPEED*1000;
+      if(anim)anim.cancel();
+      anim=track.animate([{transform:'translate3d(0,0,0)'},{transform:'translate3d('+(-S)+'px,0,0)'}],{duration:D,iterations:Infinity,easing:'linear'});
+      anim.currentTime=p*D;state();
+    }
+    function state(){if(!anim)return;var stop=hover||lbOpen||tw;if(stop&&anim.playState==='running')anim.pause();if(!stop&&anim.playState!=='running')anim.play()}
+    function norm(t){return ((t%D)+D)%D}
+    wrap.addEventListener('mouseenter',function(){hover=true;state()});
+    wrap.addEventListener('mouseleave',function(){hover=false;state()});
+    wrap.addEventListener('focusin',function(){hover=true;state()});
+    wrap.addEventListener('focusout',function(){hover=false;state()});
+    document.querySelectorAll('.arrows button').forEach(function(b){b.addEventListener('click',function(){
+      var step=(orig[0].getBoundingClientRect().width+22)/S*D,from=norm(anim.currentTime),to=from+step*+b.dataset.dir,t0=performance.now();
+      tw=true;state();
+      (function f(now){var k=Math.min(1,(now-t0)/600),e=1-Math.pow(1-k,3);anim.currentTime=norm(from+(to-from)*e);if(k<1)requestAnimationFrame(f);else{tw=null;state()}})(t0);
+    })});
+    // lightbox
+    var lb=document.getElementById('lb'),cur=0,last=null;
+    function fill(i){cur=(i+n)%n;var d=orig[cur];lb.querySelector('.img').style.cssText='background-image:'+d.dataset.img+';';lb.querySelector('h3').textContent=d.querySelector('h3').textContent;lb.querySelector('p').textContent=d.querySelector('p').textContent}
+    function open(i){last=document.activeElement;fill(i);lb.classList.add('open');lb.setAttribute('aria-hidden','false');lbOpen=true;state();document.body.style.overflow='hidden';lb.querySelector('.x').focus()}
+    function close(){lb.classList.remove('open');lb.setAttribute('aria-hidden','true');lbOpen=false;state();document.body.style.overflow='';if(last)last.focus()}
+    track.querySelectorAll('.dish').forEach(function(d,i){
+      d.addEventListener('click',function(){open(i%n)});
+      d.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open(i%n)}});
     });
-  });
+    lb.querySelector('.x').addEventListener('click',close);
+    lb.addEventListener('click',function(e){if(e.target===lb)close()});
+    lb.querySelector('.btn').addEventListener('click',close);
+    lb.querySelectorAll('[data-d]').forEach(function(b){b.addEventListener('click',function(){fill(cur+ +b.dataset.d)})});
+    document.addEventListener('keydown',function(e){if(!lbOpen)return;if(e.key==='Escape')close();if(e.key==='ArrowRight')fill(cur+1);if(e.key==='ArrowLeft')fill(cur-1)});
+    var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(build,150)});
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){hover=true}
+    build();
+  })();
 
   // open-now badge (Belgrade time); Fri/Sat open until 01h
   try{
