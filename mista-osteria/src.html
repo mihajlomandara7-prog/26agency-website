@@ -245,28 +245,34 @@ section{padding:120px 0}
 .marquee span:nth-child(even){color:var(--red);-webkit-text-stroke:0;font-family:var(--script);text-transform:none;font-weight:400;font-size:clamp(2.6rem,5.6vw,4.6rem)}
 @keyframes mq{to{transform:translateX(-50%)}}
 
-/* chef */
-.chef{background:var(--ink);color:rgba(255,255,255,.78);position:relative;overflow:hidden}
-.chef::before{content:"CHEF";position:absolute;right:-2vw;top:50%;transform:translateY(-50%);font-family:var(--sans);font-weight:800;font-size:clamp(8rem,22vw,20rem);line-height:1;color:transparent;-webkit-text-stroke:1px rgba(184,146,87,.18);letter-spacing:-.02em;pointer-events:none}
-.chef .grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(40px,7vw,100px);align-items:center;position:relative}
-.chef .portrait{position:relative;max-width:440px;width:100%;justify-self:center}
-.chef .portrait .ph{aspect-ratio:67/105;background:var(--i-chef) center top/cover;border-radius:999px 999px 6px 6px;position:relative;z-index:1}
-.chef .portrait::before{content:"";position:absolute;inset:-18px 18px 18px -18px;border:1.5px solid var(--gold);border-radius:999px 999px 6px 6px}
-.chef .badge{position:absolute;right:-34px;bottom:70px;width:130px;height:130px;z-index:2;background:var(--red);border-radius:50%;display:grid;place-items:center;color:#fff;box-shadow:0 14px 30px rgba(0,0,0,.35)}
+/* chef: full-height split, photo edge-to-edge on the left */
+.chef{background:var(--ink);color:rgba(255,255,255,.78);padding:0;position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);min-height:100svh}
+.chef .pcol{position:relative;min-height:100svh;overflow:hidden}
+.chef .pcol .ph{position:absolute;inset:0;background:var(--i-chef) center 18%/cover no-repeat;transform:scale(1.06);transition:transform 2.4s cubic-bezier(.2,.7,.2,1)}
+.chef .pcol.in .ph{transform:scale(1)}
+.chef .pcol::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 55%,var(--ink)),linear-gradient(0deg,rgba(28,28,26,.55),transparent 30%)}
+.chef .badge{position:absolute;right:28px;bottom:48px;width:128px;height:128px;z-index:2;background:var(--red);border-radius:50%;display:grid;place-items:center;color:#fff;box-shadow:0 14px 30px rgba(0,0,0,.35)}
 .chef .badge svg{position:absolute;inset:0;width:100%;height:100%;animation:badgespin 22s linear infinite}
 .chef .badge b{font-family:var(--script);font-weight:400;font-size:2.2rem;line-height:1}
 @keyframes badgespin{to{transform:rotate(360deg)}}
-.chef .script-title{text-align:left}
-.chef .script-title .s{transform:translate(-2%,0) rotate(-4deg)}
-.chef .script-title .c{color:#fff}
-.chef h3{font-family:var(--serif);font-weight:400;color:#fff;font-size:clamp(2.2rem,4.4vw,3.6rem);line-height:1.05;margin:26px 0 6px}
-.chef .role{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;font-weight:700;color:var(--gold)}
-.chef blockquote{font-family:var(--serif);font-style:italic;font-size:clamp(1.25rem,2vw,1.6rem);line-height:1.45;color:#fff;margin:34px 0 24px;padding-left:24px;border-left:2px solid var(--red)}
-.chef p{max-width:520px;margin-bottom:16px}
-.chef .sign{font-family:var(--script);color:var(--gold);font-size:2.6rem;margin-top:10px;line-height:1}
-.chef .facts{display:flex;gap:38px;margin-top:34px;padding-top:26px;border-top:1px solid rgba(255,255,255,.12)}
-.chef .facts b{display:block;font-family:var(--serif);font-weight:400;font-size:1.7rem;color:#fff;line-height:1.1}
-.chef .facts span{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:rgba(255,255,255,.55)}
+.chef .tcol{position:relative;display:flex;flex-direction:column;justify-content:center;padding:clamp(70px,8vw,130px) clamp(24px,7vw,120px) clamp(70px,8vw,130px) clamp(24px,4vw,60px)}
+.chef .tcol::before{content:"CHEF";position:absolute;right:-1vw;bottom:-2vw;font-family:var(--sans);font-weight:800;font-size:clamp(7rem,16vw,15rem);line-height:.8;color:transparent;-webkit-text-stroke:1px rgba(184,146,87,.16);pointer-events:none}
+.chef .kick{display:flex;align-items:center;gap:14px;font-size:.68rem;letter-spacing:.32em;text-transform:uppercase;font-weight:700;color:var(--gold)}
+.chef .kick::before{content:"";width:46px;height:1px;background:var(--gold)}
+.chef .kick em{font-family:var(--script);font-style:normal;text-transform:none;letter-spacing:0;font-weight:400;font-size:2.2rem;line-height:1;color:var(--gold)}
+.chef h2{font-family:var(--serif);font-weight:400;color:#fff;font-size:clamp(3rem,6vw,5.6rem);line-height:.95;letter-spacing:-.01em;margin:22px 0 18px}
+.chef h2 span{display:block;padding-left:clamp(30px,5vw,80px)}
+.chef .role{display:inline-flex;align-items:center;gap:10px;font-size:.7rem;letter-spacing:.26em;text-transform:uppercase;font-weight:700;color:#fff}
+.chef .role i{display:inline-flex;gap:3px}
+.chef .role i b{width:8px;height:8px;border-radius:0 50% 50% 50%;transform:rotate(45deg)}
+.chef blockquote{font-family:var(--serif);font-style:italic;font-size:clamp(1.3rem,2vw,1.7rem);line-height:1.45;color:#fff;margin:36px 0 26px;padding-left:24px;border-left:2px solid var(--red);max-width:560px}
+.chef p{max-width:540px;margin-bottom:14px;font-size:.98rem}
+.chef .foot{display:flex;align-items:center;gap:34px;flex-wrap:wrap;margin-top:34px;padding-top:28px;border-top:1px solid rgba(255,255,255,.12)}
+.chef .sign{font-family:var(--script);color:var(--gold);font-size:2.6rem;line-height:1}
+.chef .facts{display:flex;gap:34px}
+.chef .facts b{display:block;font-family:var(--serif);font-weight:400;font-size:1.5rem;color:#fff;line-height:1.1}
+.chef .facts span{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:rgba(255,255,255,.55)}
+.chef .btn{margin-top:34px;align-self:flex-start;border-radius:40px}
 
 /* menu */
 .menu{background:var(--cream);position:relative;padding-top:150px}
@@ -354,9 +360,11 @@ footer small{font-size:.74rem;opacity:.65}
   .hero .shot i{filter:brightness(.5)}
   .dish-cap{display:none}
   .hero .inner{justify-self:center;width:100%;margin-left:0}
-    .chef .grid{grid-template-columns:1fr;gap:60px}
-  .chef .portrait{max-width:340px}
-  .chef .badge{right:-14px;width:110px;height:110px}
+    .chef{grid-template-columns:1fr;min-height:0}
+  .chef .pcol{min-height:78svh}
+  .chef .pcol::after{background:linear-gradient(0deg,var(--ink),transparent 40%)}
+  .chef .badge{right:18px;bottom:28px;width:104px;height:104px}
+  .chef .tcol{padding:10px 20px 80px}
   .links,.icons,.nav .reserve-btn{display:none}
   .burger{display:block}
   .mpanel{position:fixed;inset:74px 0 auto;background:rgba(28,28,26,.98);padding:6px 20px 28px;display:none}
@@ -519,27 +527,28 @@ footer small{font-size:.74rem;opacity:.65}
 </section>
 
 <section class="chef" id="kuvar">
-  <div class="wrap grid">
-    <div class="portrait reveal">
-      <div class="ph" role="img" aria-label="Kuvar Federiko Carbone u restoranu Mista Osteria"></div>
-      <div class="badge" aria-hidden="true">
-        <svg viewBox="0 0 130 130"><defs><path id="badgeCircle" d="M65 65 m-48 0 a48 48 0 1 1 96 0 a48 48 0 1 1 -96 0"/></defs><text fill="#fff" font-family="Montserrat,sans-serif" font-size="10" font-weight="700"><textPath href="#badgeCircle" textLength="298" lengthAdjust="spacing">CHEF · ITALIA · MISTA OSTERIA · </textPath></text></svg>
-        <b>Chef</b>
-      </div>
+  <div class="pcol reveal">
+    <div class="ph" role="img" aria-label="Kuvar Federiko Carbone u restoranu Mista Osteria"></div>
+    <div class="badge" aria-hidden="true">
+      <svg viewBox="0 0 130 130"><defs><path id="badgeCircle" d="M65 65 m-48 0 a48 48 0 1 1 96 0 a48 48 0 1 1 -96 0"/></defs><text fill="#fff" font-family="Montserrat,sans-serif" font-size="10" font-weight="700"><textPath href="#badgeCircle" textLength="298" lengthAdjust="spacing">CHEF · ITALIA · MISTA OSTERIA · </textPath></text></svg>
+      <b>Chef</b>
     </div>
-    <div class="reveal">
-      <h2 class="script-title"><span class="s">Il nostro</span><span class="c caps">Kuvar</span></h2>
-      <h3>Federiko Carbone</h3>
-      <span class="role">Kuvar iz Italije · Mista Special</span>
-      <blockquote>„Prava italijanska kuhinja je jednostavna: vrhunski sastojci, strpljenje i mnogo ljubavi.“</blockquote>
-      <p>Tradicionalna italijanska jela koja pronalazite na meniju <strong style="color:#fff">Mista Special</strong> za Vas sprema naš kuvar iz Italije, Federiko Carbone.</p>
-      <p>Od hrskavih brusketa i kremastog rižota sa šafranom do lingvina sa grdobinom: recepti koje je doneo iz Italije, pripremljeni u srcu Kruševca.</p>
+  </div>
+  <div class="tcol reveal">
+    <span class="kick"><em>Il nostro</em> Kuvar</span>
+    <h2>Federiko<span>Carbone</span></h2>
+    <span class="role"><i aria-hidden="true"><b style="background:#3d8b45"></b><b style="background:#fff"></b><b style="background:var(--red)"></b></i>Kuvar iz Italije · Mista Special</span>
+    <blockquote>„Prava italijanska kuhinja je jednostavna: vrhunski sastojci, strpljenje i mnogo ljubavi.“</blockquote>
+    <p>Tradicionalna italijanska jela koja pronalazite na meniju <strong style="color:#fff">Mista Special</strong> za Vas sprema naš kuvar iz Italije, Federiko Carbone.</p>
+    <p>Od hrskavih brusketa i kremastog rižota sa šafranom do lingvina sa grdobinom: recepti koje je doneo iz Italije, pripremljeni u srcu Kruševca.</p>
+    <div class="foot">
       <div class="sign">Federiko Carbone</div>
       <div class="facts">
         <div><b>Italia</b><span>Poreklo</span></div>
         <div><b>Mista Special</b><span>Njegov meni</span></div>
       </div>
     </div>
+    <a class="btn btn-red" href="#meni">Pogledaj njegov meni</a>
   </div>
 </section>
 
