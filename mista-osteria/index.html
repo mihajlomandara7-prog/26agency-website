@@ -171,7 +171,7 @@ header,.mcall,.notch{transition:opacity .8s ease}
 .hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(18,16,14,.5),transparent 22%,transparent 72%,rgba(18,16,14,.55))}
 .hero .inner{position:relative;z-index:3;padding:0 20px}
 .hero h1.hero-logo{margin:-.1em auto 22px;line-height:0}
-.hero h1.hero-logo i{display:block;width:min(560px,78vw);aspect-ratio:680/366;margin:0 auto;background:var(--i-logo) center/contain no-repeat;filter:drop-shadow(0 6px 30px rgba(0,0,0,.45))}
+.hero h1.hero-logo i{display:block;width:min(480px,70vw);aspect-ratio:680/366;margin:0 auto;background:var(--i-logo) center/contain no-repeat;filter:drop-shadow(0 6px 30px rgba(0,0,0,.45))}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .hero .welcome{font-family:var(--script);color:var(--gold);font-size:clamp(3.4rem,8vw,6rem);line-height:.9;margin-bottom:.1em;display:block;transform:translate(-6%,0) rotate(-5deg);text-shadow:0 4px 30px rgba(0,0,0,.35)}
 .divider{display:flex;align-items:center;justify-content:center;gap:12px;margin:18px auto 14px;width:min(420px,80vw)}
@@ -833,7 +833,7 @@ window.mT=function(s){return window.mistaLang==='en'&&window.MISTA_EN[s]||s};
 
   // live update: when a new version is deployed, open tabs reload themselves
   (function(){
-    var V='e7c382327e';
+    var V='75b1ccd0ff';
     if(!/^https?:$/.test(location.protocol))return;
     function check(){
       if(document.hidden)return;
