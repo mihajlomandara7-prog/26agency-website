@@ -163,10 +163,10 @@ header,.mcall,.notch{transition:opacity .8s ease}
 @keyframes zoom{to{transform:scale(1.12)}}
 .hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(18,16,14,.5),transparent 22%,transparent 72%,rgba(18,16,14,.55))}
 .hero .inner{position:relative;z-index:3;padding:0 20px}
-.hero .welcome{font-family:var(--script);color:var(--gold);font-size:clamp(4.4rem,11vw,8.2rem);line-height:.8;display:block;transform:translate(-6%,0) rotate(-5deg);text-shadow:0 4px 30px rgba(0,0,0,.35)}
-.hero h1{position:relative;display:inline-block;margin-top:-.05em;line-height:1;text-shadow:0 4px 30px rgba(0,0,0,.35)}
-.hero h1 .m{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(4rem,10vw,8.6rem);letter-spacing:.04em;line-height:.9;margin-right:-.04em;-webkit-mask-image:linear-gradient(180deg,#000 45%,transparent 45%,transparent 67%,#000 67%);mask-image:linear-gradient(180deg,#000 45%,transparent 45%,transparent 67%,#000 67%)}
-.hero h1 .o{position:absolute;left:50%;top:56%;transform:translate(-50%,-50%);font-family:var(--sans);font-weight:600;font-size:clamp(.95rem,2.1vw,1.8rem);letter-spacing:.55em;padding-left:.55em;white-space:nowrap}
+.hero h1.hero-logo{margin:-.1em auto 22px;line-height:0}
+.hero h1.hero-logo i{display:block;width:min(560px,78vw);aspect-ratio:680/366;margin:0 auto;background:var(--i-logo) center/contain no-repeat;filter:drop-shadow(0 6px 30px rgba(0,0,0,.45))}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hero .welcome{font-family:var(--script);color:var(--gold);font-size:clamp(3.4rem,8vw,6rem);line-height:.9;margin-bottom:.1em;display:block;transform:translate(-6%,0) rotate(-5deg);text-shadow:0 4px 30px rgba(0,0,0,.35)}
 .divider{display:flex;align-items:center;justify-content:center;gap:12px;margin:18px auto 14px;width:min(420px,80vw)}
 .divider::before,.divider::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.85)}
 .divider b{width:7px;height:7px;background:var(--gold);transform:rotate(45deg)}
@@ -423,10 +423,7 @@ footer small{font-size:.74rem;opacity:.65}
   .visit .card{padding:40px 22px}
   .story .facts{gap:22px}
     .hero .sub{letter-spacing:.2em;margin-right:-.2em;font-size:.7rem}
-  .hero h1 .m{-webkit-mask-image:none;mask-image:none}
-  .hero h1 .o{top:auto;bottom:-1.5em;transform:translateX(-50%)}
-  .hero h1{margin-bottom:1.6em}
-  .mcall{display:flex;position:fixed;left:14px;right:14px;bottom:14px;z-index:40;justify-content:center;background:var(--red);color:#fff;padding:15px;font-weight:700;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+      .mcall{display:flex;position:fixed;left:14px;right:14px;bottom:14px;z-index:40;justify-content:center;background:var(--red);color:#fff;padding:15px;font-weight:700;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;box-shadow:0 10px 30px rgba(0,0,0,.3)}
   footer .bottom{padding-bottom:100px}
 }
 </style>
@@ -474,8 +471,7 @@ footer small{font-size:.74rem;opacity:.65}
   <div class="dish-cap" aria-live="polite"><small>Iz naše kuhinje</small><b></b><span></span></div>
   <div class="inner">
     <span class="welcome">Benvenuti</span>
-    <h1 aria-label="Mista Osteria"><span class="m" aria-hidden="true">MISTA</span><span class="o" aria-hidden="true">OSTERIA</span></h1>
-    <div class="divider"><b></b></div>
+    <h1 class="hero-logo"><span class="sr-only">Mista Osteria</span><i aria-hidden="true"></i></h1>
     <p class="sub">Autentični italijanski ukusi</p>
     <a class="btn btn-white" href="tel:+381638124455">Rezerviši sto</a>
     <p class="meta">Majke Jugovića 5 · Kruševac</p>
