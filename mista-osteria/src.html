@@ -330,8 +330,11 @@ footer .logo-sm{width:96px;height:96px;margin:0 auto 26px;background:var(--i-log
 footer small{font-size:.74rem;opacity:.65}
 
 /* reveal */
-/* scroll-synced reveal: JS sets opacity/transform from scroll position (see "scroll reveal") */
-.sr{will-change:transform,opacity}
+/* reveal: when a section enters the screen its title rises, then photos drop in one by one */
+.sr{opacity:0;transition:opacity .9s ease,transform 1s cubic-bezier(.2,.75,.25,1);will-change:transform,opacity}
+.sr.rise{transform:translate3d(0,40px,0)}
+.sr.drop{transform:translate3d(0,-110px,0)}
+.sr.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.marquee div{animation:none!important}.hero .shot i,.notch i{animation:none}.hero.drop .inner>*{animation:none}html{scroll-behavior:auto}}
 
 /* mobile call bar */
@@ -657,7 +660,8 @@ footer small{font-size:.74rem;opacity:.65}
     var wrap=document.getElementById('dishes'),track=document.getElementById('track');if(!track)return;
     var orig=[].slice.call(track.children),n=orig.length;
     for(var c=0;c<2;c++)orig.forEach(function(el){var k=el.cloneNode(true);k.setAttribute('aria-hidden','true');k.tabIndex=-1;track.appendChild(k)});
-    var SPEED=40,anim=null,D=1,S=1,hover=false,lbOpen=false,tw=null;
+    var SPEED=40,anim=null,D=1,S=1,hover=false,lbOpen=false,tw=null,held=true;
+    document.getElementById('specijaliteti').addEventListener('sr:ready',function(){held=false;state()});
     function build(){
       var p=anim?(anim.currentTime%D)/D:0;
       S=track.scrollWidth/3;D=S/SPEED*1000;
@@ -665,7 +669,7 @@ footer small{font-size:.74rem;opacity:.65}
       anim=track.animate([{transform:'translate3d(0,0,0)'},{transform:'translate3d('+(-S)+'px,0,0)'}],{duration:D,iterations:Infinity,easing:'linear'});
       anim.currentTime=p*D;state();
     }
-    function state(){if(!anim)return;var stop=hover||lbOpen||tw;if(stop&&anim.playState==='running')anim.pause();if(!stop&&anim.playState!=='running')anim.play()}
+    function state(){if(!anim)return;var stop=hover||lbOpen||tw||held;if(stop&&anim.playState==='running')anim.pause();if(!stop&&anim.playState!=='running')anim.play()}
     function norm(t){return ((t%D)+D)%D}
     wrap.addEventListener('mouseenter',function(){hover=true;state()});
     wrap.addEventListener('mouseleave',function(){hover=false;state()});
@@ -713,13 +717,14 @@ footer small{font-size:.74rem;opacity:.65}
     var track=root.querySelector('.st-track');
     var orig=[].slice.call(track.children),n=orig.length;
     for(var c=0;c<2;c++)orig.forEach(function(el){var k=el.cloneNode(true);k.setAttribute('aria-hidden','true');k.querySelector('img').alt='';track.appendChild(k)});
-    var SPEED=35,anim=null,D=1; // px per second
+    var SPEED=35,anim=null,D=1,held=true; // px per second
+    root.addEventListener('sr:ready',function(){held=false;if(anim)anim.play()});
     function build(){
       var p=anim?(anim.currentTime%D)/D:0;
       var S=orig[0].getBoundingClientRect().width*n;D=S/SPEED*1000;
       if(anim)anim.cancel();
       anim=track.animate([{transform:'translate3d(0,0,0)'},{transform:'translate3d('+(-S)+'px,0,0)'}],{duration:D,iterations:Infinity,easing:'linear'});
-      anim.currentTime=p*D;
+      anim.currentTime=p*D;if(held)anim.pause();
     }
     var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(build,150)});
     Promise.all(orig.map(function(f){var i=f.querySelector('img');return i.decode?i.decode().catch(function(){}):0})).then(build);
@@ -748,47 +753,38 @@ footer small{font-size:.74rem;opacity:.65}
     setTimeout(function(){setInterval(function(){show((cur+1)%layers.length)},5000)},3400);
   })();
 
-  // scroll reveal: tied to scroll position (scrubs back when scrolling up).
-  // Titles/blocks rise in; photos drop in from above one after another.
+  // reveal: each section plays once it enters the screen (title first, then photos
+  // drop in one by one) and resets when you scroll back above it, so it replays.
   (function(){
-    var items=[];
-    function add(el,kind,delay,order){el.classList.add('sr');items.push({el:el,kind:kind,delay:delay||0,order:order||0})}
-    document.querySelectorAll('.reveal').forEach(function(el){add(el,'rise',0)});
-    var groups=[['#track .dish','x'],['.st-track .st-slide','x'],['.story .photos figure','dom'],['.cols .col','dom'],['.grid-ig a','dom']];
-    groups.forEach(function(g){
-      [].slice.call(document.querySelectorAll(g[0])).forEach(function(el,i){add(el,'drop',.1,g[1]==='x'?'x':i)});
+    var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var sections=[];
+    function sec(el){var s=el.closest('section');var o=sections.filter(function(x){return x.el===s})[0];if(!o){o={el:s,rise:[],drop:[],on:false,t:null};sections.push(o)}return o}
+    document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('sr','rise');sec(el).rise.push(el)});
+    ['#track .dish','.st-track .st-slide','.story .photos figure','.cols .col','.grid-ig a'].forEach(function(q){
+      document.querySelectorAll(q).forEach(function(el){el.classList.add('sr','drop');sec(el).drop.push(el)});
     });
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-    // target progress comes from scroll position; the shown value eases toward it
-    // every frame, so motion stays slow and soft even with a fast scroll wheel.
-    var running=false;
-    function target(it,vh){
-      var r=it.el.getBoundingClientRect(),order=it.order;
-      if(order==='x'){order=Math.max(0,Math.floor((r.left+r.width*.5)/Math.max(1,r.width)))}
-      var raw=(vh-r.top)/vh;
-      return Math.min(1,Math.max(0,(raw-.02-it.delay-order*.07)/.35));
+    function play(o){
+      o.on=true;var vw=window.innerWidth,d=0;
+      o.rise.forEach(function(el,i){el.style.transitionDelay=(i*.12)+'s';el.classList.add('in')});
+      var base=o.rise.length?.35:0,vis=[];
+      o.drop.forEach(function(el){var r=el.getBoundingClientRect();if(r.right>0&&r.left<vw)vis.push(el);else{el.style.transitionDelay='0s';el.classList.add('in')}});
+      vis.sort(function(a,b){var A=a.getBoundingClientRect(),B=b.getBoundingClientRect();return (A.top-B.top)||(A.left-B.left)});
+      vis.forEach(function(el,i){el.style.transitionDelay=(base+i*.16)+'s';el.classList.add('in')});
+      clearTimeout(o.t);o.t=setTimeout(function(){o.el.dispatchEvent(new Event('sr:ready'))},(base+vis.length*.16+.8)*1000);
     }
-    function paint(it){
-      var e=it.cur*it.cur*(3-2*it.cur); // smoothstep
-      it.el.style.transform=it.kind==='drop'?'translate3d(0,'+(-(1-e)*120).toFixed(1)+'px,0)':'translate3d(0,'+((1-e)*46).toFixed(1)+'px,0)';
-      it.el.style.opacity=e.toFixed(3);
+    function reset(o){o.on=false;clearTimeout(o.t);o.rise.concat(o.drop).forEach(function(el){el.style.transitionDelay='0s';el.classList.remove('in')})}
+    function check(){
+      var vh=window.innerHeight;
+      sections.forEach(function(o){
+        var r=o.el.getBoundingClientRect();
+        if(!o.on&&r.top<vh*.8&&r.bottom>0)play(o);
+        else if(o.on&&r.top>vh)reset(o);
+      });
     }
-    function frame(){
-      var vh=window.innerHeight,moving=false;
-      for(var k=0;k<items.length;k++){
-        var it=items[k],t=target(it,vh);
-        if(it.cur===undefined)it.cur=t;
-        var d=t-it.cur;
-        if(Math.abs(d)>.001){it.cur+=d*.1;moving=true}else it.cur=t;
-        paint(it);
-      }
-      if(moving)requestAnimationFrame(frame);else running=false;
-    }
-    function req(){if(!running){running=true;requestAnimationFrame(frame)}}
-    window.addEventListener('scroll',req,{passive:true});
-    window.addEventListener('resize',req);
-    items.forEach(function(it){it.cur=target(it,window.innerHeight);paint(it)});
-    setInterval(req,500);
+    if(reduce){sections.forEach(function(o){o.rise.concat(o.drop).forEach(function(el){el.classList.add('in')});o.el.dispatchEvent(new Event('sr:ready'))});return}
+    var t=false;window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(function(){t=false;check()})}},{passive:true});
+    window.addEventListener('resize',check);
+    check();
   })();
 })();
 </script>
