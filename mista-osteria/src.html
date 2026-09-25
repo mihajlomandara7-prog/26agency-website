@@ -167,11 +167,11 @@ section{padding:120px 0}
 .st-ctrl .pl{display:none}.stories.paused .st-ctrl .pa{display:none}.stories.paused .st-ctrl .pl{display:block}
 .st-rail{overflow:hidden;cursor:grab;touch-action:pan-y;user-select:none}
 .st-rail.drag{cursor:grabbing}
-.st-track{display:flex;width:max-content;will-change:transform}
+.st-track{display:flex;width:max-content;will-change:transform;backface-visibility:hidden;transform:translateZ(0)}
 .st-slide{flex:0 0 auto;width:clamp(280px,30vw,430px);aspect-ratio:4/5;scroll-snap-align:start;margin:0;overflow:hidden;background:#fff}
-.st-slide img{width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none}
+.st-slide img{width:100%;height:100%;object-fit:cover;display:block;backface-visibility:hidden;user-select:none;-webkit-user-drag:none}
 .st-progress{margin-top:34px;height:2px;background:#ece6de;position:relative}
-.st-progress span{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--red);transition:width .4s ease}
+.st-progress span{position:absolute;left:0;top:0;bottom:0;width:100%;background:var(--red);transform-origin:left;transform:scaleX(0)}
 .st-foot{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--muted)}
 
 .marquee{margin-top:80px;border-top:1px solid #eee;border-bottom:1px solid #eee;padding:22px 0;overflow:hidden;white-space:nowrap}
@@ -546,52 +546,65 @@ footer small{font-size:.74rem;opacity:.65}
   }catch(e){}
   document.getElementById('yr').textContent=new Date().getFullYear();
 
-  // stories: slides drift continuously in an endless loop (JS so drag/arrows/pause all work)
+  // stories: endless drift. Runs as a compositor animation (Web Animations API) so it
+  // stays perfectly smooth; arrows/drag just move the animation's clock.
   (function(){
     var root=document.getElementById('iskustvo');if(!root)return;
     var rail=root.querySelector('.st-rail'),track=root.querySelector('.st-track');
     var orig=[].slice.call(track.children),n=orig.length;
-    // two extra copies so the strip never runs out while looping
     for(var c=0;c<2;c++)orig.forEach(function(el){var k=el.cloneNode(true);k.setAttribute('aria-hidden','true');k.querySelector('img').alt='';track.appendChild(k)});
     var bar=root.querySelector('.st-progress span'),count=root.querySelector('.st-count b');
-    var SPEED=38; // px per second
-    var pos=0,tween=null,userPaused=false,hover=false,visible=true,dragging=false,last=performance.now();
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){userPaused=true}
-    function w(){return orig[0].getBoundingClientRect().width}
-    function setW(){return w()*n}
-    function wrap(){var S=setW();while(pos<=-S)pos+=S;while(pos>0)pos-=S}
-    function render(){
-      wrap();track.style.transform='translate3d('+pos+'px,0,0)';
-      var S=setW(),f=Math.floor((-pos+w()*0.5)/w())%n;
-      bar.style.width=(-pos/S*100)+'%';
-      count.textContent=('0'+(f+1)).slice(-2);
+    var SPEED=35; // px per second
+    var W=0,S=0,D=1,anim=null,userPaused=false,hover=false,dragging=false,visible=true,tw=null;
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)userPaused=true;
+    function build(){
+      var p=anim?(anim.currentTime%D)/D:0;
+      W=orig[0].getBoundingClientRect().width;S=W*n;D=S/SPEED*1000;
+      if(anim)anim.cancel();
+      anim=track.animate([{transform:'translate3d(0,0,0)'},{transform:'translate3d('+(-S)+'px,0,0)'}],{duration:D,iterations:Infinity,easing:'linear'});
+      anim.currentTime=p*D;state();
     }
-    function frame(t){
-      var dt=Math.min(.05,(t-last)/1000);last=t;
-      if(tween){var k=Math.min(1,(t-tween.t0)/600),e=1-Math.pow(1-k,3);pos=tween.from+(tween.to-tween.from)*e;if(k>=1)tween=null}
-      else if(!(userPaused||hover||dragging||!visible))pos-=SPEED*dt;
-      render();requestAnimationFrame(frame);
+    function state(){
+      var stop=userPaused||hover||dragging||!visible||tw;
+      if(stop&&anim.playState==='running')anim.pause();
+      if(!stop&&anim.playState!=='running')anim.play();
+      root.classList.toggle('paused',userPaused);
+    }
+    function norm(t){return ((t%D)+D)%D}
+    function hud(){
+      if(anim){
+        var t=norm(anim.currentTime||0),off=t/D*S;
+        bar.style.transform='scaleX('+(t/D)+')';
+        count.textContent=('0'+(Math.floor((off+W*.5)/W)%n+1)).slice(-2);
+      }
+      requestAnimationFrame(hud);
     }
     function nudge(d){
-      var W=w(),target=(Math.round(pos/W)-d)*W;
-      if(tween)target=tween.to-d*W;
-      tween={from:pos,to:target,t0:performance.now()};
+      var t=norm(anim.currentTime),from=t,to=(Math.round(t/D*S/W)+d)*W/S*D;
+      if(tw)to=tw.to+d*W/S*D;
+      var t0=performance.now();tw={to:to};state();
+      (function step(now){
+        if(!tw||tw.to!==to)return;
+        var k=Math.min(1,(now-t0)/650),e=1-Math.pow(1-k,3);
+        anim.currentTime=norm(from+(to-from)*e);
+        if(k<1)requestAnimationFrame(step);else{tw=null;state()}
+      })(t0);
     }
-    function sync(){root.classList.toggle('paused',userPaused)}
-    root.querySelector('.st-play').addEventListener('click',function(){userPaused=!userPaused;sync()});
+    root.querySelector('.st-play').addEventListener('click',function(){userPaused=!userPaused;state()});
     root.querySelectorAll('[data-dir]').forEach(function(b){b.addEventListener('click',function(){nudge(+b.dataset.dir)})});
-    rail.addEventListener('mouseenter',function(){hover=true});
-    rail.addEventListener('mouseleave',function(){hover=false});
+    rail.addEventListener('mouseenter',function(e){hover=true;state()});
+    rail.addEventListener('mouseleave',function(){hover=false;state()});
     rail.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){e.preventDefault();nudge(1)}if(e.key==='ArrowLeft'){e.preventDefault();nudge(-1)}});
-    var sx=0,sp=0;
-    rail.addEventListener('pointerdown',function(e){dragging=true;tween=null;sx=e.clientX;sp=pos;rail.classList.add('drag');rail.setPointerCapture(e.pointerId)});
-    rail.addEventListener('pointermove',function(e){if(dragging){pos=sp+(e.clientX-sx)}});
-    function end(){if(!dragging)return;dragging=false;rail.classList.remove('drag')}
+    var sx=0,st=0;
+    rail.addEventListener('pointerdown',function(e){dragging=true;tw=null;sx=e.clientX;st=anim.currentTime;rail.classList.add('drag');rail.setPointerCapture(e.pointerId);state()});
+    rail.addEventListener('pointermove',function(e){if(dragging)anim.currentTime=norm(st-(e.clientX-sx)/S*D)});
+    function end(e){if(!dragging)return;dragging=false;rail.classList.remove('drag');if(e.pointerType!=='mouse')hover=false;state()}
     rail.addEventListener('pointerup',end);rail.addEventListener('pointercancel',end);
-    if('IntersectionObserver' in window){
-      new IntersectionObserver(function(es){visible=es[0].isIntersecting},{threshold:0}).observe(root);
-    }
-    sync();requestAnimationFrame(frame);
+    if('IntersectionObserver' in window)new IntersectionObserver(function(es){visible=es[0].isIntersecting;anim&&state()},{threshold:0}).observe(root);
+    var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(build,150)});
+    // wait for images so widths are final
+    var imgs=orig.map(function(f){return f.querySelector('img')});
+    Promise.all(imgs.map(function(i){return i.decode?i.decode().catch(function(){}):0})).then(function(){build();hud()});
   })();
 
   var els=document.querySelectorAll('.reveal');
