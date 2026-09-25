@@ -165,7 +165,7 @@ section{padding:120px 0}
 .st-ctrl button:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
 .st-ctrl svg{width:16px;height:16px}
 .st-ctrl .pl{display:none}.stories.paused .st-ctrl .pa{display:none}.stories.paused .st-ctrl .pl{display:block}
-.st-rail{overflow:hidden;cursor:grab;touch-action:pan-y;user-select:none}
+.st-rail{overflow:hidden;user-select:none}
 .st-rail.drag{cursor:grabbing}
 .st-track{display:flex;width:max-content;will-change:transform;backface-visibility:hidden;transform:translateZ(0)}
 .st-slide{flex:0 0 auto;width:clamp(280px,30vw,430px);aspect-ratio:4/5;scroll-snap-align:start;margin:0;overflow:hidden;background:#fff}
@@ -392,14 +392,8 @@ footer small{font-size:.74rem;opacity:.65}
       <span class="st-label"><i></i>Mista priče</span>
       <h2 class="offset-title"><span>Od testa</span><span class="l2"><em class="tag">Korak po korak</em>do tanjira</span></h2>
     </div>
-    <div class="st-ctrl">
-      <span class="st-count"><b>01</b> / 06</span>
-      <button data-dir="-1" aria-label="Prethodna slika"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
-      <button class="st-play" aria-label="Pauziraj ili pusti"><svg class="pa" viewBox="0 0 12 12" fill="currentColor"><rect x="2" y="1" width="3" height="10"/><rect x="7" y="1" width="3" height="10"/></svg><svg class="pl" viewBox="0 0 12 12" fill="currentColor"><path d="M2 1l9 5-9 5z"/></svg></button>
-      <button data-dir="1" aria-label="Sledeća slika"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
-    </div>
   </div>
-  <div class="st-rail reveal" tabindex="0">
+  <div class="st-rail reveal">
     <div class="st-track">
       <figure class="st-slide"><img src="{{slide-1.webp}}" alt="Sledeće nedelje u našem gradu otvara se nešto što ne želiš da propustiš" draggable="false"></figure>
       <figure class="st-slide"><img src="{{slide-2.webp}}" alt="Prave napolitanske pice — najkvalitetniji italijanski sastojci, direktno iz Italije" draggable="false"></figure>
@@ -410,8 +404,7 @@ footer small{font-size:.74rem;opacity:.65}
     </div>
   </div>
   <div class="wrap">
-    <div class="st-progress"><span></span></div>
-    <div class="st-foot"><span>Prevucite ili zastanite mišem</span><a href="#meni" style="color:var(--red)">Pogledaj meni →</a></div>
+    <div class="st-foot" style="justify-content:flex-end"><a href="#meni" style="color:var(--red)">Pogledaj meni →</a></div>
   </div>
   <div class="marquee" aria-hidden="true"><div>
     <span>Pizza napoletana</span><span>buon appetito</span><span>48h testo</span><span>la dolce vita</span><span>Pasta fresca</span><span>mangia bene</span><span>Risotto</span><span>ciao Kruševac</span>
@@ -546,65 +539,22 @@ footer small{font-size:.74rem;opacity:.65}
   }catch(e){}
   document.getElementById('yr').textContent=new Date().getFullYear();
 
-  // stories: endless drift. Runs as a compositor animation (Web Animations API) so it
-  // stays perfectly smooth; arrows/drag just move the animation's clock.
+  // stories: endless drift that never stops. Compositor animation (Web Animations API) for smoothness.
   (function(){
     var root=document.getElementById('iskustvo');if(!root)return;
-    var rail=root.querySelector('.st-rail'),track=root.querySelector('.st-track');
+    var track=root.querySelector('.st-track');
     var orig=[].slice.call(track.children),n=orig.length;
     for(var c=0;c<2;c++)orig.forEach(function(el){var k=el.cloneNode(true);k.setAttribute('aria-hidden','true');k.querySelector('img').alt='';track.appendChild(k)});
-    var bar=root.querySelector('.st-progress span'),count=root.querySelector('.st-count b');
-    var SPEED=35; // px per second
-    var W=0,S=0,D=1,anim=null,userPaused=false,hover=false,dragging=false,visible=true,tw=null;
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)userPaused=true;
+    var SPEED=35,anim=null,D=1; // px per second
     function build(){
       var p=anim?(anim.currentTime%D)/D:0;
-      W=orig[0].getBoundingClientRect().width;S=W*n;D=S/SPEED*1000;
+      var S=orig[0].getBoundingClientRect().width*n;D=S/SPEED*1000;
       if(anim)anim.cancel();
       anim=track.animate([{transform:'translate3d(0,0,0)'},{transform:'translate3d('+(-S)+'px,0,0)'}],{duration:D,iterations:Infinity,easing:'linear'});
-      anim.currentTime=p*D;state();
+      anim.currentTime=p*D;
     }
-    function state(){
-      var stop=userPaused||hover||dragging||!visible||tw;
-      if(stop&&anim.playState==='running')anim.pause();
-      if(!stop&&anim.playState!=='running')anim.play();
-      root.classList.toggle('paused',userPaused);
-    }
-    function norm(t){return ((t%D)+D)%D}
-    function hud(){
-      if(anim){
-        var t=norm(anim.currentTime||0),off=t/D*S;
-        bar.style.transform='scaleX('+(t/D)+')';
-        count.textContent=('0'+(Math.floor((off+W*.5)/W)%n+1)).slice(-2);
-      }
-      requestAnimationFrame(hud);
-    }
-    function nudge(d){
-      var t=norm(anim.currentTime),from=t,to=(Math.round(t/D*S/W)+d)*W/S*D;
-      if(tw)to=tw.to+d*W/S*D;
-      var t0=performance.now();tw={to:to};state();
-      (function step(now){
-        if(!tw||tw.to!==to)return;
-        var k=Math.min(1,(now-t0)/650),e=1-Math.pow(1-k,3);
-        anim.currentTime=norm(from+(to-from)*e);
-        if(k<1)requestAnimationFrame(step);else{tw=null;state()}
-      })(t0);
-    }
-    root.querySelector('.st-play').addEventListener('click',function(){userPaused=!userPaused;state()});
-    root.querySelectorAll('[data-dir]').forEach(function(b){b.addEventListener('click',function(){nudge(+b.dataset.dir)})});
-    rail.addEventListener('mouseenter',function(e){hover=true;state()});
-    rail.addEventListener('mouseleave',function(){hover=false;state()});
-    rail.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){e.preventDefault();nudge(1)}if(e.key==='ArrowLeft'){e.preventDefault();nudge(-1)}});
-    var sx=0,st=0;
-    rail.addEventListener('pointerdown',function(e){dragging=true;tw=null;sx=e.clientX;st=anim.currentTime;rail.classList.add('drag');rail.setPointerCapture(e.pointerId);state()});
-    rail.addEventListener('pointermove',function(e){if(dragging)anim.currentTime=norm(st-(e.clientX-sx)/S*D)});
-    function end(e){if(!dragging)return;dragging=false;rail.classList.remove('drag');if(e.pointerType!=='mouse')hover=false;state()}
-    rail.addEventListener('pointerup',end);rail.addEventListener('pointercancel',end);
-    if('IntersectionObserver' in window)new IntersectionObserver(function(es){visible=es[0].isIntersecting;anim&&state()},{threshold:0}).observe(root);
     var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(build,150)});
-    // wait for images so widths are final
-    var imgs=orig.map(function(f){return f.querySelector('img')});
-    Promise.all(imgs.map(function(i){return i.decode?i.decode().catch(function(){}):0})).then(function(){build();hud()});
+    Promise.all(orig.map(function(f){var i=f.querySelector('img');return i.decode?i.decode().catch(function(){}):0})).then(build);
   })();
 
   var els=document.querySelectorAll('.reveal');
