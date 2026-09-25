@@ -38,6 +38,7 @@
   --i-sendvic:url({{sendvic.webp}});
   --i-sendvic-detail:url({{sendvic-detail.webp}});
   --i-chef:url({{chef.webp}});
+  --i-hero:url({{hero-margherita.webp}});
 
   --green:#1e3b31;
   --red:#c4432b;
@@ -84,7 +85,8 @@ header{position:fixed;inset:0 0 auto;z-index:50;transition:background .35s,paddi
 header.scrolled{background:rgba(28,28,26,.95);backdrop-filter:blur(8px);padding:0}
 .nav{display:flex;align-items:center;gap:30px;height:74px}
 .brand{width:128px;height:70px;background:var(--i-logo) left center/contain no-repeat;flex:none}
-.links{display:flex;gap:34px;list-style:none;margin-left:auto}
+.links{display:flex;gap:26px;list-style:none;margin-left:auto}
+.links a{white-space:nowrap}
 .links a{color:var(--white);font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;position:relative;padding:6px 0}
 .links a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;background:var(--gold);transition:right .3s}
 .links a:hover::after{right:0}
@@ -102,10 +104,14 @@ header.open .burger span::after{top:0;transform:rotate(-45deg)}
 
 /* hero */
 .hero{position:relative;height:100svh;min-height:620px;display:grid;place-items:center;text-align:center;color:var(--white);overflow:hidden;background-color:var(--ink)}
-.hero .photo{position:absolute;inset:-4%;background-image:var(--i-pizza);transform:scale(1.04);animation:zoom 18s ease-out forwards}
+.hero .photo{position:absolute;inset:0;background:radial-gradient(ellipse 45% 60% at 22% 45%,rgba(184,146,87,.10),transparent 70%),#141312}
+.hero .shot{position:absolute;z-index:0;top:0;bottom:0;right:0;width:min(46vw,760px);overflow:hidden}
+.hero .shot::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#141312 0%,rgba(20,19,18,.8) 14%,rgba(20,19,18,.3) 32%,transparent 50%)}
+.hero .shot i{position:absolute;inset:0;background:var(--i-hero) center 62%/cover;transform:scale(1.02);animation:zoom 18s ease-out forwards}
+.hero .inner{justify-self:start;width:min(58%,860px);margin-left:max(0px,(100vw - 1400px)/2)}
 @keyframes zoom{to{transform:scale(1.12)}}
-.hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(18,16,14,.6),rgba(18,16,14,.38) 40%,rgba(18,16,14,.75))}
-.hero .arc{position:absolute;z-index:2;left:4%;width:92%;top:15%;height:auto;overflow:visible;pointer-events:none}
+.hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(18,16,14,.5),transparent 22%,transparent 72%,rgba(18,16,14,.55))}
+.hero .arc{position:absolute;z-index:2;left:3%;width:min(56%,840px);top:17%;height:auto;overflow:visible;pointer-events:none}
 .hero .inner{position:relative;z-index:3;padding:0 20px}
 .hero .welcome{font-family:var(--script);color:var(--gold);font-size:clamp(4.4rem,11vw,8.2rem);line-height:.8;display:block;transform:translate(-6%,0) rotate(-5deg);text-shadow:0 4px 30px rgba(0,0,0,.35)}
 .hero h1{font-family:var(--sans);font-weight:800;letter-spacing:.24em;font-size:clamp(2rem,6vw,4.4rem);line-height:1;margin-top:-.28em;margin-right:-.24em;text-shadow:0 4px 30px rgba(0,0,0,.4)}
@@ -278,12 +284,17 @@ footer small{font-size:.74rem;opacity:.65}
 /* reveal */
 .reveal{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s ease}
 .reveal.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.marquee div{animation:none!important}.hero .photo,.notch i{animation:none}html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.marquee div{animation:none!important}.hero .shot i,.notch i{animation:none}html{scroll-behavior:auto}}
 
 /* mobile call bar */
 .mcall{display:none}
 
 @media (max-width:1000px){
+  .hero .shot{width:100%}
+  .hero .shot::after{background:linear-gradient(0deg,#141312,transparent 45%)}
+  .hero .shot i{background-position:center 55%;filter:brightness(.5)}
+  .hero .inner{justify-self:center;width:100%;margin-left:0}
+  .hero .arc{left:4%;width:92%}
   .chef .grid{grid-template-columns:1fr;gap:60px}
   .chef .portrait{max-width:340px}
   .chef .badge{right:-14px;width:110px;height:110px}
@@ -359,6 +370,7 @@ footer small{font-size:.74rem;opacity:.65}
 <main>
 <section class="hero" id="pocetna" style="padding:0">
   <div class="photo bg" aria-hidden="true"></div>
+  <div class="shot" aria-hidden="true"><i></i></div>
   <svg class="arc" viewBox="0 0 1000 170" preserveAspectRatio="none" aria-hidden="true">
     <path id="heroArc" d="M0 165 Q500 -70 1000 165" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
     <circle r="9" fill="#fff"><animateMotion dur="14s" repeatCount="indefinite" keyPoints="0.08;0.92;0.08" keyTimes="0;0.5;1" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"><mpath href="#heroArc"/></animateMotion></circle>
