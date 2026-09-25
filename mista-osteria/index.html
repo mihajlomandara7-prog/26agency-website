@@ -752,40 +752,43 @@ footer small{font-size:.74rem;opacity:.65}
   // Titles/blocks rise in; photos drop in from above one after another.
   (function(){
     var items=[];
-    function add(el,kind,delay,order){el.classList.add('sr');items.push({el:el,kind:kind,delay:delay||0,order:order})}
+    function add(el,kind,delay,order){el.classList.add('sr');items.push({el:el,kind:kind,delay:delay||0,order:order||0})}
     document.querySelectorAll('.reveal').forEach(function(el){add(el,'rise',0)});
     var groups=[['#track .dish','x'],['.st-track .st-slide','x'],['.story .photos figure','dom'],['.cols .col','dom'],['.grid-ig a','dom']];
     groups.forEach(function(g){
       [].slice.call(document.querySelectorAll(g[0])).forEach(function(el,i){add(el,'drop',.12,g[1]==='x'?'x':i)});
     });
     if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-    var ticking=false;
-    function update(){
-      ticking=false;
-      var vh=window.innerHeight;
-      for(var k=0;k<items.length;k++){
-        var it=items[k],r=it.el.getBoundingClientRect();
-        if(r.bottom<-200&&it.done)continue;
-        var order=it.order;
-        if(order==='x'){order=Math.max(0,Math.floor((r.left+r.width*.5)/Math.max(1,r.width)))}
-        var raw=(vh-r.top)/vh;
-        var p=Math.min(1,Math.max(0,(raw-.04-it.delay-order*.07)/.28));
-        var e=1-Math.pow(1-p,3);
-        if(it.kind==='drop'){
-          it.el.style.transform='translate3d(0,'+(-(1-e)*140).toFixed(1)+'px,0)';
-        }else{
-          it.el.style.transform='translate3d(0,'+((1-e)*50).toFixed(1)+'px,0)';
-        }
-        it.el.style.opacity=e.toFixed(3);
-        it.done=p>=1;
-      }
+    // target progress comes from scroll position; the shown value eases toward it
+    // every frame, so motion stays slow and soft even with a fast scroll wheel.
+    var running=false;
+    function target(it,vh){
+      var r=it.el.getBoundingClientRect(),order=it.order;
+      if(order==='x'){order=Math.max(0,Math.floor((r.left+r.width*.5)/Math.max(1,r.width)))}
+      var raw=(vh-r.top)/vh;
+      return Math.min(1,Math.max(0,(raw-.06-it.delay-order*.13)/.55));
     }
-    function req(){if(!ticking){ticking=true;requestAnimationFrame(update)}}
+    function paint(it){
+      var e=it.cur*it.cur*(3-2*it.cur); // smoothstep
+      it.el.style.transform=it.kind==='drop'?'translate3d(0,'+(-(1-e)*120).toFixed(1)+'px,0)':'translate3d(0,'+((1-e)*46).toFixed(1)+'px,0)';
+      it.el.style.opacity=e.toFixed(3);
+    }
+    function frame(){
+      var vh=window.innerHeight,moving=false;
+      for(var k=0;k<items.length;k++){
+        var it=items[k],t=target(it,vh);
+        if(it.cur===undefined)it.cur=t;
+        var d=t-it.cur;
+        if(Math.abs(d)>.001){it.cur+=d*.06;moving=true}else it.cur=t;
+        paint(it);
+      }
+      if(moving)requestAnimationFrame(frame);else running=false;
+    }
+    function req(){if(!running){running=true;requestAnimationFrame(frame)}}
     window.addEventListener('scroll',req,{passive:true});
     window.addEventListener('resize',req);
-    update();
-    // cards inside moving strips change x-position, keep their order fresh
-    setInterval(req,400);
+    items.forEach(function(it){it.cur=target(it,window.innerHeight);paint(it)});
+    setInterval(req,500);
   })();
 })();
 </script>
