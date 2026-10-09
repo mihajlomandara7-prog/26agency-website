@@ -187,21 +187,21 @@ body.locked{overflow:hidden}
 }
 
 /* ---------- podrum: dve slike koje se pretapaju ---------- */
-.cellar{background:var(--wine);padding:clamp(60px,8vw,110px) 0 0;overflow:hidden}
+.cellar{position:relative;z-index:4;background:transparent;padding:0;overflow-x:clip}
 .cellar-head{text-align:center;max-width:820px}
 .cellar-head .lead{margin:22px auto 0;color:rgba(255,255,255,.75)}
 .cellar ul{list-style:none;margin:30px auto 0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:12px 46px}
 .cellar li b{display:block;font-size:30px;font-weight:600;color:var(--gold-2);line-height:1.1}
 .cellar li span{font-size:14px;color:rgba(255,255,255,.7)}
-.duo{position:relative;height:clamp(460px,52vw,780px);margin-top:clamp(40px,6vw,80px);
+.duo{position:relative;height:clamp(460px,52vw,780px);margin-top:-15vw;
   -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 14%,#000 84%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 14%,#000 84%,transparent 100%)}
 .duo .ph{position:absolute;top:0;bottom:0;width:58%;background-size:cover}
 .duo .l{left:0;background-image:url(img/party-aerial.jpg);background-position:center 62%;
   -webkit-mask-image:linear-gradient(90deg,#000 55%,transparent 100%);mask-image:linear-gradient(90deg,#000 55%,transparent 100%)}
-.duo .r{right:0;background-image:url(img/bottling-hall.jpg);background-position:60% center;
+.duo .r{right:0;background-image:url(img/party-pool.jpg);background-position:center 70%;
   -webkit-mask-image:linear-gradient(270deg,#000 55%,transparent 100%);mask-image:linear-gradient(270deg,#000 55%,transparent 100%)}
 .duo .mist{position:absolute;left:28%;right:28%;top:-10%;bottom:-10%;pointer-events:none;
-  background:radial-gradient(50% 55% at 50% 50%,rgba(222,227,236,.82) 0%,rgba(222,227,236,.5) 40%,rgba(222,227,236,0) 78%);filter:blur(22px)}
+  background:radial-gradient(50% 55% at 50% 50%,rgba(222,227,236,.5) 0%,rgba(222,227,236,.28) 40%,rgba(222,227,236,0) 78%);filter:blur(22px)}
 .duo .tag{position:absolute;bottom:22%;z-index:2;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.6)}
 .duo .tag.tl{left:max(16px,calc((100% - 1240px)/2))}
 .duo .tag.tr{right:max(16px,calc((100% - 1240px)/2))}
@@ -209,7 +209,7 @@ body.locked{overflow:hidden}
   .duo{height:auto}
   .duo .ph{position:relative;width:100%;height:110vw}
   .duo .l{-webkit-mask-image:linear-gradient(180deg,#000 70%,transparent 100%);mask-image:linear-gradient(180deg,#000 70%,transparent 100%)}
-  .duo .r{margin-top:-30vw;height:80vw;-webkit-mask-image:linear-gradient(0deg,#000 65%,transparent 100%);mask-image:linear-gradient(0deg,#000 65%,transparent 100%)}
+  .duo .r{margin-top:-30vw;height:110vw;-webkit-mask-image:linear-gradient(0deg,#000 65%,transparent 100%);mask-image:linear-gradient(0deg,#000 65%,transparent 100%)}
   .duo .mist{left:-10%;right:-10%;top:45%;bottom:auto;height:50vw}
   .duo .tag.tl{top:18%;bottom:auto}.duo .tag.tr{bottom:16%}
 }
@@ -450,15 +450,15 @@ body.locked{overflow:hidden}
         <h2 class="h2 rv"><b>Vinogradi</b><span>srca Šumadije</span></h2>
         <p class="caps rv d1">Brežuljci Oplenca — ručna berba</p>
         <p class="t rv d1">Južne padine, krečnjačko tlo i topla šumadijska leta daju grožđe pune zrelosti. Zato u podrumu ne tražimo prečice — vino nastaje od grožđa, vremena i strpljenja.</p>
-        <a class="more rv d2" href="#podrum">Više o našoj proizvodnji <i></i></a>
+        <a class="more rv d2" href="#dozivljaji">Više o imanju <i></i></a>
       </div>
     </div>
     <div class="map" id="map" role="img" aria-label="Vinarija 27 iz vazduha">
       <div class="spot" style="left:30%;top:52%"><span class="dot"></span><svg><path d="M0 0 L-40 -40 L-110 -40" stroke="#fff" fill="none"/></svg><span class="lb" style="right:118px;bottom:28px;text-align:right">Vinarija<br>i podrum</span></div>
       <div class="spot" style="left:52%;top:30%"><span class="dot"></span><svg><path d="M0 0 L40 -40 L110 -40" stroke="#fff" fill="none"/></svg><span class="lb" style="left:118px;bottom:28px">Krovna terasa</span></div>
       <div class="spot" style="left:63%;top:56%"><span class="dot"></span><svg><path d="M0 0 L40 -40 L110 -40" stroke="#fff" fill="none"/></svg><span class="lb" style="left:118px;bottom:28px">Degustaciona sala<br>sa pogledom</span></div>
-      <div class="spot" style="left:20%;top:76%"><span class="dot"></span><svg><path d="M0 0 L40 40 L110 40" stroke="#fff" fill="none"/></svg><span class="lb" style="left:118px;top:24px"><b>12 ha</b>vinograda</span></div>
-      <div class="spot" style="left:82%;top:76%"><span class="dot"></span><svg><path d="M0 0 L-40 40 L-110 40" stroke="#fff" fill="none"/></svg><span class="lb" style="right:118px;top:24px;text-align:right"><b>40.000</b>čokota</span></div>
+      <div class="spot" style="left:14%;top:60%"><span class="dot"></span><svg><path d="M0 0 L40 40 L110 40" stroke="#fff" fill="none"/></svg><span class="lb" style="left:118px;top:24px"><b>12 ha</b>vinograda</span></div>
+      <div class="spot" style="left:88%;top:58%"><span class="dot"></span><svg><path d="M0 0 L-40 40 L-110 40" stroke="#fff" fill="none"/></svg><span class="lb" style="right:118px;top:24px;text-align:right"><b>40.000</b>čokota</span></div>
     </div>
     <div class="stats">
       <div><b>12 ha</b><span>vinograda</span></div>
@@ -470,23 +470,12 @@ body.locked{overflow:hidden}
 
   <!-- PODRUM -->
   <section class="cellar" id="podrum">
-    <div class="wrap cellar-head">
-      <span class="eyebrow rv">Podrum i imanje</span>
-      <h2 class="h2 rv d1" style="margin-top:14px"><b>Gde vino</b><span>sazreva</span></h2>
-      <p class="lead rv d2">Svaka boca Vinarije 27 nastaje ovde, na imanju: od fermentacije i odležavanja do punjenja i pakovanja. A kada vino sazri, slavimo ga zajedno sa vama — uz bazen, muziku i pogled na Šumadiju.</p>
-      <ul class="rv d3">
-        <li><b>4</b><span>vrste vina</span></li>
-        <li><b>2020.</b><span>prva berba</span></li>
-        <li><b>12</b><span>meseci u hrastu</span></li>
-        <li><b>100%</b><span>sa našeg imanja</span></li>
-      </ul>
-    </div>
-    <div class="duo rv d1" role="img" aria-label="Proslava uz bazen na imanju i podrum sa bocama Vinarije 27">
+    <div class="duo" role="img" aria-label="Proslava uz bazen na imanju Vinarije 27">
       <div class="ph l"></div>
       <div class="ph r"></div>
       <div class="mist"></div>
       <span class="tag tl">Proslave · imanje</span>
-      <span class="tag tr">Podrum · Ovsište</span>
+      <span class="tag tr">Leto na imanju</span>
     </div>
   </section>
 
