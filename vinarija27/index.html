@@ -217,7 +217,7 @@ body.locked{overflow:hidden}
 
 /* ---------- full-bleed statement ---------- */
 .bleed{position:relative;min-height:100svh;display:grid;place-items:center;text-align:center;overflow:hidden}
-.bleed .bgimg{position:absolute;inset:-12% 0;background:url(img/vinogradi-hero.jpg) center/cover;will-change:transform}
+.bleed .bgimg{position:absolute;inset:-5% 0;background:url(img/vineyard-rows.jpg) center 45%/cover;will-change:transform}
 .bleed::after{content:"";position:absolute;inset:0;background:radial-gradient(70% 60% at 50% 55%,rgba(31,12,15,.55),rgba(31,12,15,.2)),linear-gradient(180deg,var(--wine) 0%,rgba(58,18,25,0) 18%,rgba(58,18,25,0) 82%,var(--cream) 100%)}
 .bleed .wrap{position:relative;z-index:2;max-width:880px;padding:120px 0}
 .bleed .h2 span{font-weight:200}
@@ -626,7 +626,7 @@ body.locked{overflow:hidden}
     if(reduce)return;
     var r=sky.getBoundingClientRect(),vh=innerHeight,p=Math.min(1,Math.max(0,(vh*.85-r.top)/(r.height*.9)));
     clouds.forEach(function(c){var d=+c.dataset.cloud;c.style.transform='translateX('+(d*p*42)+'vw) translateY('+(-p*6)+'vh)'+(c.hasAttribute('data-flip')?' scaleX(-1)':'')});
-    var b=par.parentNode.getBoundingClientRect(),q=(b.top+b.height/2-vh/2)/vh;par.style.transform='translateY('+(q*-8)+'%)';
+    var b=par.parentNode.getBoundingClientRect(),q=(b.top+b.height/2-vh/2)/vh;par.style.transform='translateY('+(q*-4)+'%)';
   }
   var tick=false;addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(function(){fx();tick=false})}},{passive:true});
   addEventListener('resize',fx);fx();
