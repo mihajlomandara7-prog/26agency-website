@@ -151,16 +151,16 @@ body.locked{overflow:hidden}
 
 /* ---------- estate / clouds + hotspots ---------- */
 .estate{position:relative;background:var(--wine);overflow:hidden}
-.sky{position:relative;height:clamp(420px,62vw,820px);background:url(img/hero-2.jpg) center 30%/cover}
-.sky::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,var(--wine) 0%,rgba(58,18,25,.65) 22%,rgba(58,18,25,0) 50%,rgba(31,20,22,.25) 100%)}
-.cloud{position:absolute;top:8%;width:52vw;height:38vw;pointer-events:none;will-change:transform;
-  background:
-   radial-gradient(closest-side,rgba(255,255,255,.95),rgba(255,255,255,0)) 10% 55%/46% 52% no-repeat,
-   radial-gradient(closest-side,rgba(255,255,255,.9),rgba(255,255,255,0)) 38% 38%/52% 58% no-repeat,
-   radial-gradient(closest-side,rgba(255,255,255,.85),rgba(255,255,255,0)) 64% 60%/48% 50% no-repeat,
-   radial-gradient(closest-side,rgba(255,255,255,.75),rgba(255,255,255,0)) 30% 72%/60% 40% no-repeat;filter:blur(6px)}
-.cloud.l{left:-14vw}.cloud.r{right:-14vw;transform:scaleX(-1)}
-.sky-in{position:absolute;left:0;right:0;bottom:clamp(40px,8vw,110px);z-index:2}
+.sky{position:relative;height:clamp(560px,78vw,1100px);background:url(img/hero-2.jpg) center bottom/cover;overflow:hidden}
+.sky::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,var(--wine) 0%,var(--wine) 22%,rgba(58,18,25,.55) 42%,rgba(150,160,180,.25) 62%,rgba(58,18,25,0) 78%,rgba(31,20,22,.25) 100%)}
+.cloud{position:absolute;z-index:2;height:auto;max-width:none;pointer-events:none;will-change:transform;filter:drop-shadow(0 20px 40px rgba(0,0,0,.12))}
+.cloud[data-flip]{transform:scaleX(-1)}
+.cloud.l1{left:-4vw;top:16%;width:62vw}
+.cloud.l2{left:-22vw;top:44%;width:52vw;opacity:.92}
+.cloud.r1{right:-6vw;top:4%;width:60vw}
+.cloud.r2{right:-20vw;top:40%;width:50vw;opacity:.92}
+@media (max-width:760px){.cloud.l1,.cloud.r1{width:110vw}.cloud.l2,.cloud.r2{width:95vw}}
+.sky-in{position:absolute;left:0;right:0;bottom:clamp(40px,8vw,110px);z-index:3}
 .sky-in .h2{text-shadow:0 2px 30px rgba(0,0,0,.35)}
 .map{position:relative;aspect-ratio:16/9;max-height:92vh;width:100%;background:url(img/vinogradi-photo-3.jpg) center/cover}
 .map::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(31,20,22,.55) 0%,rgba(31,20,22,0) 30%,rgba(31,20,22,0) 80%,var(--wine) 100%)}
@@ -418,8 +418,10 @@ body.locked{overflow:hidden}
   <!-- IMANJE -->
   <section class="estate" id="imanje">
     <div class="sky">
-      <div class="cloud l" data-cloud="-1"></div>
-      <div class="cloud r" data-cloud="1"></div>
+      <img class="cloud l2" src="img/cloud-2.png" alt="" data-cloud="-0.7">
+      <img class="cloud r2" src="img/cloud-1.png" alt="" data-cloud="0.75" data-flip>
+      <img class="cloud l1" src="img/cloud-1.png" alt="" data-cloud="-1">
+      <img class="cloud r1" src="img/cloud-2.png" alt="" data-cloud="1" data-flip>
       <div class="sky-in wrap"><h2 class="h2 rv"><b>Vinogradi</b><span>srca Šumadije</span></h2></div>
     </div>
     <div class="map" id="map">
@@ -586,8 +588,8 @@ body.locked{overflow:hidden}
   function fx(){
     onScroll();
     if(reduce)return;
-    var r=sky.getBoundingClientRect(),vh=innerHeight,p=Math.min(1,Math.max(0,(vh-r.top)/(vh+r.height)));
-    clouds.forEach(function(c){var d=+c.dataset.cloud;c.style.transform='translateX('+(d*p*38)+'vw)'+(d>0?' scaleX(-1)':'');c.style.opacity=1-p*.9});
+    var r=sky.getBoundingClientRect(),vh=innerHeight,p=Math.min(1,Math.max(0,(vh*.85-r.top)/(r.height*.9)));
+    clouds.forEach(function(c){var d=+c.dataset.cloud;c.style.transform='translateX('+(d*p*42)+'vw) translateY('+(-p*6)+'vh)'+(c.hasAttribute('data-flip')?' scaleX(-1)':'')});
     var b=par.parentNode.getBoundingClientRect(),q=(b.top+b.height/2-vh/2)/vh;par.style.transform='translateY('+(q*-8)+'%)';
   }
   var tick=false;addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(function(){fx();tick=false})}},{passive:true});
