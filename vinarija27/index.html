@@ -102,7 +102,8 @@ body.locked{overflow:hidden}
 @keyframes drop{to{top:110%}}
 
 /* ---------- intro (watermark) ---------- */
-.intro{position:relative;text-align:center;padding:clamp(110px,16vw,190px) 0 clamp(90px,12vw,150px);background:radial-gradient(120% 80% at 50% 20%,var(--wine-3) 0%,var(--wine) 55%,var(--wine-2) 100%);overflow:hidden}
+.story{background:radial-gradient(90% 55% at 50% 12%,var(--wine-3) 0%,rgba(77,27,36,0) 70%),radial-gradient(70% 40% at 50% 62%,rgba(77,27,36,.55) 0%,rgba(77,27,36,0) 70%),var(--wine)}
+.intro{position:relative;text-align:center;padding:clamp(110px,16vw,190px) 0 clamp(60px,8vw,110px);overflow:hidden}
 .intro .mark{position:absolute;left:50%;top:50%;width:min(620px,90vw);transform:translate(-50%,-50%);opacity:.07;pointer-events:none}
 .intro .wrap{position:relative;max-width:860px}
 .intro .lead{margin:34px auto 0}
@@ -110,7 +111,7 @@ body.locked{overflow:hidden}
 .intro .lead.gold{color:var(--gold-2);font-style:italic}
 
 /* ---------- wines carousel ---------- */
-.wines{position:relative;overflow:hidden;background:var(--wine);padding:20px 0 clamp(90px,10vw,130px);text-align:center}
+.wines{position:relative;overflow:hidden;padding:20px 0 clamp(90px,10vw,130px);text-align:center}
 .wines-head .lead{margin:22px auto 0;color:rgba(255,255,255,.75)}
 .stage{position:relative;height:clamp(560px,52vw,660px);margin-top:60px;touch-action:pan-y}
 .card{position:absolute;left:50%;top:0;width:clamp(240px,23vw,300px);transform:translateX(-50%);transition:transform .9s var(--ease),opacity .9s var(--ease),filter .9s;cursor:pointer}
@@ -372,6 +373,7 @@ body.locked{overflow:hidden}
     </div>
   </section>
 
+  <div class="story">
   <!-- PRIČA -->
   <section class="intro" id="o-nama">
     <img class="mark" src="img/nav-logo-27.png" alt="">
@@ -414,6 +416,7 @@ body.locked{overflow:hidden}
     </div>
     <a class="all" href="#kontakt">Pogledajte sva vina</a>
   </section>
+  </div>
 
   <!-- IMANJE -->
   <section class="estate" id="imanje">
