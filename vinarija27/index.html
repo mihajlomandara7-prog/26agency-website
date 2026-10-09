@@ -150,46 +150,56 @@ body.locked{overflow:hidden}
   .card[data-pos="1"]{transform:translateX(calc(-50% + 104%))}
 }
 
-/* ---------- estate / clouds + hotspots ---------- */
+/* ---------- estate: panorama -> aerial (MIKO prelaz) ---------- */
 .estate{position:relative;background:var(--wine);overflow:hidden}
-.sky{position:relative;height:clamp(560px,78vw,1100px);background:url(img/hero-2.jpg) center bottom/cover;overflow:hidden}
-.sky::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,var(--wine) 0%,var(--wine) 22%,rgba(58,18,25,.55) 42%,rgba(150,160,180,.25) 62%,rgba(58,18,25,0) 78%,rgba(31,20,22,.25) 100%)}
+.sky{position:relative;height:clamp(720px,92vw,1240px);background:url(img/hero-2.jpg) center 70%/cover}
+.sky::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,var(--wine) 0%,var(--wine) 14%,rgba(58,18,25,.55) 30%,rgba(120,120,140,.18) 48%,rgba(58,18,25,0) 62%)}
 .cloud{position:absolute;z-index:2;height:auto;max-width:none;pointer-events:none;will-change:transform;filter:drop-shadow(0 20px 40px rgba(0,0,0,.12))}
 .cloud[data-flip]{transform:scaleX(-1)}
-.cloud.l1{left:-4vw;top:16%;width:62vw}
-.cloud.l2{left:-22vw;top:44%;width:52vw;opacity:.92}
-.cloud.r1{right:-6vw;top:4%;width:60vw}
-.cloud.r2{right:-20vw;top:40%;width:50vw;opacity:.92}
+.cloud.l1{left:-4vw;top:6%;width:62vw}
+.cloud.l2{left:-22vw;top:26%;width:52vw;opacity:.92}
+.cloud.r1{right:-6vw;top:0;width:60vw}
+.cloud.r2{right:-20vw;top:22%;width:50vw;opacity:.92}
 @media (max-width:760px){.cloud.l1,.cloud.r1{width:110vw}.cloud.l2,.cloud.r2{width:95vw}}
-.sky-in{position:absolute;left:0;right:0;bottom:clamp(40px,8vw,110px);z-index:3}
-.sky-in .h2{text-shadow:0 2px 30px rgba(0,0,0,.35)}
-.map{position:relative;aspect-ratio:16/9;max-height:92vh;width:100%;background:url(img/vinogradi-photo-3.jpg) center/cover}
-.map::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(31,20,22,.55) 0%,rgba(31,20,22,0) 30%,rgba(31,20,22,0) 80%,var(--wine) 100%)}
-.map-txt{position:absolute;left:0;right:0;top:clamp(26px,5vw,70px);z-index:3}
-.map-txt .k{font-size:13px;font-weight:500;letter-spacing:.14em;text-transform:uppercase}
-.map-txt p{margin:6px 0 0;max-width:560px;font-size:16px}
+.sky-in{position:absolute;left:0;right:0;top:34%;z-index:3;text-shadow:0 2px 24px rgba(0,0,0,.35)}
+.sky-in .caps{margin:30px 0 0;font-size:15px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.sky-in p.t{margin:6px 0 0;max-width:600px;font-size:clamp(16px,1.4vw,20px);font-weight:400}
+.map{position:relative;z-index:3;margin-top:-22vw;width:100%;aspect-ratio:1206/785;max-height:none;background:url(img/aerial-winery.jpg) center/cover;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 26%,#000 82%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 26%,#000 82%,transparent 100%)}
 .spot{position:absolute;z-index:3;width:0;height:0}
 .spot .dot{position:absolute;left:-7px;top:-7px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.35)}
 .spot .dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid #fff;animation:pulse 2.4s infinite}
 @keyframes pulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(2.6);opacity:0}}
-.spot .ln{position:absolute;bottom:0;left:0;width:70px;height:46px;border-top:1px solid #fff;border-right:0;transform-origin:0 100%}
-.spot .ln::before{content:"";position:absolute;left:0;bottom:0;width:1px;height:66px;background:#fff;transform:rotate(45deg);transform-origin:0 100%;display:none}
-.spot .lb{position:absolute;bottom:34px;left:44px;white-space:nowrap;font-size:15px;line-height:1.2;text-shadow:0 1px 10px rgba(0,0,0,.6)}
-.spot .lb b{display:block;font-size:24px;font-weight:600}
+.spot .lb{position:absolute;white-space:nowrap;font-size:17px;font-weight:500;line-height:1.2;text-shadow:0 1px 3px rgba(0,0,0,.8),0 2px 18px rgba(0,0,0,.6)}
+.spot .lb b{display:block;font-size:26px;font-weight:600}
 .spot svg{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible}
-.spot.left .lb{left:auto;right:44px;text-align:right}
+.spot.left .lb{text-align:right}
 .js .spot{opacity:0;transform:translateY(12px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
 .js .map.in .spot{opacity:1;transform:none}
-.js .map.in .spot:nth-child(3){transition-delay:.15s}.js .map.in .spot:nth-child(4){transition-delay:.3s}.js .map.in .spot:nth-child(5){transition-delay:.45s}.js .map.in .spot:nth-child(6){transition-delay:.6s}.js .map.in .spot:nth-child(7){transition-delay:.75s}
+.js .map.in .spot:nth-child(2){transition-delay:.15s}.js .map.in .spot:nth-child(3){transition-delay:.3s}.js .map.in .spot:nth-child(4){transition-delay:.45s}.js .map.in .spot:nth-child(5){transition-delay:.6s}
 .stats{display:none}
 @media (max-width:820px){
-  .map{aspect-ratio:auto;height:560px;background-position:60% center}
+  .sky-in{top:42%}
+  .map{margin-top:-40vw}
   .spot{display:none}
   .stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.12);border-top:1px solid rgba(255,255,255,.12)}
   .stats div{background:var(--wine);padding:22px 18px}
   .stats b{display:block;font-size:28px;font-weight:600;color:var(--gold-2)}
   .stats span{font-size:14px;color:rgba(255,255,255,.75)}
 }
+
+/* ---------- podrum ---------- */
+.cellar{background:var(--wine);padding:clamp(60px,8vw,110px) 0 clamp(90px,10vw,140px)}
+.cellar .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(36px,6vw,90px);align-items:center}
+.cellar .lead{margin:22px 0 0;color:rgba(255,255,255,.75)}
+.cellar ul{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.12)}
+.cellar li{background:var(--wine);padding:16px 18px 16px 0}
+.cellar li b{display:block;font-size:30px;font-weight:600;color:var(--gold-2);line-height:1.1}
+.cellar li span{font-size:14px;color:rgba(255,255,255,.7)}
+.cellar figure{margin:0;position:relative}
+.cellar figure img{width:100%;aspect-ratio:4/3;object-fit:cover;box-shadow:0 40px 80px -30px rgba(0,0,0,.6)}
+.cellar figcaption{position:absolute;left:-1px;bottom:-1px;background:var(--wine);padding:14px 22px 0 0;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-2)}
+@media (max-width:900px){.cellar .wrap{grid-template-columns:1fr}}
 
 /* ---------- full-bleed statement ---------- */
 .bleed{position:relative;min-height:100svh;display:grid;place-items:center;text-align:center;overflow:hidden}
@@ -406,7 +416,7 @@ body.locked{overflow:hidden}
         <div class="txt"><div class="k">Vinarija 27</div><h3>Chardonnay</h3><p>Sveže i elegantno belo vino sa notama zelene jabuke, citrusa i belog cveta.</p><a class="go" href="#kontakt">Saznaj više</a></div>
       </article>
       <article class="card" data-i="3">
-        <div class="ph"><div class="bg" style="background-image:url(img/pool.jpg)"></div><img class="bottle" src="img/bottle-shumante-rose.png" alt="Boca Shumante Rosé vina" loading="lazy"></div>
+        <div class="ph"><div class="bg" style="background-image:url(img/proslave-photo-3.jpg)"></div><img class="bottle" src="img/bottle-shumante-rose.png" alt="Boca Shumante Rosé vina" loading="lazy"></div>
         <div class="txt"><div class="k">Vinarija 27</div><h3>Shumante Rosé</h3><p>Nežan roze penušavac sa notama divlje jagode i ružinih latica — za tople letnje večeri.</p><a class="go" href="#kontakt">Saznaj više</a></div>
       </article>
     </div>
@@ -425,25 +435,43 @@ body.locked{overflow:hidden}
       <img class="cloud r2" src="img/cloud-1.png" alt="" data-cloud="0.75" data-flip>
       <img class="cloud l1" src="img/cloud-1.png" alt="" data-cloud="-1">
       <img class="cloud r1" src="img/cloud-2.png" alt="" data-cloud="1" data-flip>
-      <div class="sky-in wrap"><h2 class="h2 rv"><b>Vinogradi</b><span>srca Šumadije</span></h2></div>
-    </div>
-    <div class="map" id="map">
-      <div class="map-txt wrap rv">
-        <div class="k">Brežuljci Oplenca — ručna berba</div>
-        <p>Južne padine, krečnjačko tlo i topla šumadijska leta daju grožđe pune zrelosti, bez kompromisa u podrumu.</p>
-        <a class="more" href="#o-nama">Više o našem vinogradu <i></i></a>
+      <div class="sky-in wrap">
+        <h2 class="h2 rv"><b>Vinogradi</b><span>srca Šumadije</span></h2>
+        <p class="caps rv d1">Brežuljci Oplenca — ručna berba</p>
+        <p class="t rv d1">Južne padine, krečnjačko tlo i topla šumadijska leta daju grožđe pune zrelosti. Zato u podrumu ne tražimo prečice — vino nastaje od grožđa, vremena i strpljenja.</p>
+        <a class="more rv d2" href="#podrum">Više o našoj proizvodnji <i></i></a>
       </div>
-      <div class="spot" style="left:22%;top:62%"><span class="dot"></span><svg width="60" height="40"><path d="M0 0 L30 -30 L60 -30" stroke="#fff" fill="none" transform="translate(0,0)"/></svg><span class="lb" style="bottom:12px;left:66px"><b>12 ha</b>vinograda</span></div>
-      <div class="spot left" style="left:48%;top:78%"><span class="dot"></span><svg width="60" height="40"><path d="M0 0 L-30 -30 L-60 -30" stroke="#fff" fill="none"/></svg><span class="lb" style="bottom:12px;right:66px"><b>40.000</b>čokota vinove loze</span></div>
-      <div class="spot" style="left:63%;top:56%"><span class="dot"></span><svg width="60" height="40"><path d="M0 0 L30 -30 L60 -30" stroke="#fff" fill="none"/></svg><span class="lb" style="bottom:12px;left:66px"><b>4 sorte</b>Merlot, Chardonnay, Pinot, Tamjanika</span></div>
-      <div class="spot left" style="left:80%;top:80%"><span class="dot"></span><svg width="60" height="40"><path d="M0 0 L-30 -30 L-60 -30" stroke="#fff" fill="none"/></svg><span class="lb" style="bottom:12px;right:66px"><b>300 m</b>nadmorske visine</span></div>
-      <div class="spot" style="left:10%;top:86%"><span class="dot"></span><svg width="60" height="40"><path d="M0 0 L30 -30 L60 -30" stroke="#fff" fill="none"/></svg><span class="lb" style="bottom:12px;left:66px"><b>100%</b>ručna berba</span></div>
+    </div>
+    <div class="map" id="map" role="img" aria-label="Vinarija 27 iz vazduha">
+      <div class="spot" style="left:30%;top:52%"><span class="dot"></span><svg><path d="M0 0 L-40 -40 L-110 -40" stroke="#fff" fill="none"/></svg><span class="lb" style="right:118px;bottom:28px;text-align:right">Vinarija<br>i podrum</span></div>
+      <div class="spot" style="left:52%;top:30%"><span class="dot"></span><svg><path d="M0 0 L40 -40 L110 -40" stroke="#fff" fill="none"/></svg><span class="lb" style="left:118px;bottom:28px">Krovna terasa</span></div>
+      <div class="spot" style="left:63%;top:56%"><span class="dot"></span><svg><path d="M0 0 L40 -40 L110 -40" stroke="#fff" fill="none"/></svg><span class="lb" style="left:118px;bottom:28px">Degustaciona sala<br>sa pogledom</span></div>
+      <div class="spot" style="left:20%;top:76%"><span class="dot"></span><svg><path d="M0 0 L40 40 L110 40" stroke="#fff" fill="none"/></svg><span class="lb" style="left:118px;top:24px"><b>12 ha</b>vinograda</span></div>
+      <div class="spot" style="left:82%;top:76%"><span class="dot"></span><svg><path d="M0 0 L-40 40 L-110 40" stroke="#fff" fill="none"/></svg><span class="lb" style="right:118px;top:24px;text-align:right"><b>40.000</b>čokota</span></div>
     </div>
     <div class="stats">
       <div><b>12 ha</b><span>vinograda</span></div>
       <div><b>40.000</b><span>čokota vinove loze</span></div>
       <div><b>4 sorte</b><span>grožđa</span></div>
       <div><b>300 m</b><span>nadmorske visine</span></div>
+    </div>
+  </section>
+
+  <!-- PODRUM -->
+  <section class="cellar" id="podrum">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow rv">Podrum</span>
+        <h2 class="h2 rv d1" style="margin-top:14px"><b>Gde vino</b><span>sazreva</span></h2>
+        <p class="lead rv d2">Svaka boca Vinarije 27 nastaje ovde, na imanju: od fermentacije i odležavanja do punjenja i pakovanja. Penušavac Shumante sazreva na kvascu, a crvena vina u hrastovim buradima.</p>
+        <ul class="rv d3">
+          <li><b>4</b><span>vrste vina</span></li>
+          <li><b>2020.</b><span>prva berba</span></li>
+          <li><b>12</b><span>meseci u hrastu</span></li>
+          <li><b>100%</b><span>sa našeg imanja</span></li>
+        </ul>
+      </div>
+      <figure class="rv d1"><img src="img/bottling-hall.jpg" alt="Podrum Vinarije 27 sa složenim bocama i kutijama Shumante" loading="lazy"><figcaption>Podrum · Ovsište</figcaption></figure>
     </div>
   </section>
 
@@ -485,7 +513,7 @@ body.locked{overflow:hidden}
       </div>
       <div class="panels">
         <a class="panel rv" href="#kontakt"><img src="img/apartmani-hero.jpg" alt="Enterijer apartmana" loading="lazy"><div class="in"><div class="n">01</div><h3>Apartmani</h3><p>6 apartmana sa pogledom na vinograd i bazenom.</p><span class="more">Rezerviši <i></i></span></div></a>
-        <a class="panel rv d1" href="#kontakt"><img src="img/proslave-photo-2.jpg" alt="Proslava na travnjaku imanja" loading="lazy"><div class="in"><div class="n">02</div><h3>Proslave</h3><p>Venčanja, rođendani i korporativni događaji do 150 gostiju.</p><span class="more">Pošalji upit <i></i></span></div></a>
+        <a class="panel rv d1" href="#kontakt"><img src="img/pool.jpg" alt="Proslava uz bazen i živu muziku na imanju" loading="lazy"><div class="in"><div class="n">02</div><h3>Proslave</h3><p>Venčanja, rođendani i korporativni događaji do 150 gostiju.</p><span class="more">Pošalji upit <i></i></span></div></a>
         <a class="panel rv d2" href="#kontakt"><img src="img/estate-3.jpg" alt="Degustacija vina sa čašama na stolu" loading="lazy"><div class="in"><div class="n">03</div><h3>Degustacije</h3><p>Obilazak vinograda i podruma uz 5 vina i domaće zalogaje.</p><span class="more">Rezerviši <i></i></span></div></a>
       </div>
     </div>
