@@ -195,11 +195,11 @@ body.locked{overflow:hidden}
 .cellar li span{font-size:14px;color:rgba(255,255,255,.7)}
 .duo{position:relative;height:clamp(480px,58vw,880px);margin-top:-15vw;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 26%);mask-image:linear-gradient(180deg,transparent 0%,#000 26%)}
 .duo::after{display:none}
-.duo .ph{position:absolute;top:0;bottom:0;width:60%;background-size:cover}
-.duo .l{left:0;background-image:url(img/vineyard-toast.jpg);background-position:center 50%;
-  -webkit-mask-image:linear-gradient(90deg,#000 45%,transparent 100%);mask-image:linear-gradient(90deg,#000 45%,transparent 100%)}
-.duo .r{right:0;background-image:url(img/party-aerial.jpg);background-position:center 82%;
-  -webkit-mask-image:linear-gradient(270deg,#000 45%,transparent 100%);mask-image:linear-gradient(270deg,#000 45%,transparent 100%)}
+.duo .ph{position:absolute;top:0;bottom:0;background-size:cover;filter:saturate(1.18) contrast(1.05)}
+.duo .l{left:0;width:62%;z-index:2;background-image:url(img/vineyard-toast.jpg);background-position:center 50%;
+  -webkit-mask-image:linear-gradient(90deg,#000 50%,transparent 100%);mask-image:linear-gradient(90deg,#000 50%,transparent 100%)}
+.duo .r{right:0;width:78%;z-index:1;background-image:url(img/party-aerial.jpg);background-position:70% 82%;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 10%);mask-image:linear-gradient(90deg,transparent 0%,#000 10%)}
 .duo .mist{display:none}
   background:radial-gradient(50% 55% at 50% 50%,rgba(222,227,236,.5) 0%,rgba(222,227,236,.28) 40%,rgba(222,227,236,0) 78%);filter:blur(22px)}
 .duo .tag{position:absolute;bottom:24%;z-index:2;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.6)}
@@ -209,15 +209,15 @@ body.locked{overflow:hidden}
   .duo{height:auto}
   .duo .ph{position:relative;width:100%;height:110vw}
   .duo .l{-webkit-mask-image:linear-gradient(180deg,#000 70%,transparent 100%);mask-image:linear-gradient(180deg,#000 70%,transparent 100%)}
-  .duo .r{margin-top:-30vw;height:110vw;-webkit-mask-image:linear-gradient(0deg,#000 65%,transparent 100%);mask-image:linear-gradient(0deg,#000 65%,transparent 100%)}
+  .duo .r{margin-top:-30vw;height:110vw;background-position:center 92%;-webkit-mask-image:none;mask-image:none}
   .duo .mist{left:-10%;right:-10%;top:45%;bottom:auto;height:50vw}
   .duo .tag{display:none}
 }
 
 /* ---------- full-bleed statement ---------- */
 .bleed{position:relative;z-index:5;margin-top:-16vw;min-height:100svh;display:grid;place-items:center;text-align:center;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.6) 9%,#000 18%);mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.6) 9%,#000 18%)}
-.bleed .bgimg{position:absolute;inset:-5% 0;background:url(img/vineyard-rows.jpg) center 45%/cover;filter:saturate(1.3) contrast(1.08);will-change:transform}
-.bleed::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 45% at 50% 58%,rgba(0,0,0,.38),rgba(0,0,0,0) 100%),linear-gradient(180deg,rgba(0,0,0,0) 85%,var(--cream) 100%)}
+.bleed .bgimg{position:absolute;inset:-5% 0;background:url(img/vineyard-rows.jpg) center 78%/cover;filter:saturate(1.3) contrast(1.08);will-change:transform}
+.bleed::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(45,22,12,.35) 0%,rgba(45,22,12,.18) 25%,rgba(45,22,12,0) 45%),radial-gradient(60% 45% at 50% 58%,rgba(0,0,0,.38),rgba(0,0,0,0) 100%),linear-gradient(180deg,rgba(0,0,0,0) 85%,var(--cream) 100%)}
 @media (max-width:760px){.bleed{margin-top:-45vw}}
 .bleed .wrap{position:relative;z-index:2;max-width:880px;padding:120px 0}
 .bleed .h2 span{font-weight:200}
