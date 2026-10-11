@@ -90,12 +90,12 @@ body.locked{overflow:hidden}
 .hero{position:relative;height:100svh;min-height:560px;overflow:hidden;background:#1b1a14}
 .hero video,.hero .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,8,10,.45) 0%,rgba(20,8,10,0) 28%,rgba(20,8,10,0) 55%,rgba(58,18,25,.92) 100%)}
-.hero-in{position:absolute;inset:auto 0 0;z-index:2;padding-bottom:clamp(40px,9vh,90px)}
+.hero-in{position:absolute;inset:auto 0 0;z-index:2;padding-bottom:clamp(26px,5vh,54px)}
 .hero-in .wm{font-family:var(--cond);font-size:clamp(46px,9.5vw,150px);line-height:.92;letter-spacing:.005em;text-transform:uppercase;margin:0}
 .hero-in .wm span{display:block}
 .hero-in .wm span:nth-child(2){color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.9)}
-.hero-in .sub{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px;margin-top:22px}
-.hero-in .sub p{margin:0;max-width:420px;font-size:16px}
+.hero-in .scroll{position:absolute;right:0;bottom:clamp(26px,5vh,54px)}
+@media (max-width:760px){.hero-in .scroll{display:none}}
 .scroll{display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.3em;text-transform:uppercase}
 .scroll i{width:1px;height:46px;background:rgba(255,255,255,.35);position:relative;overflow:hidden}
 .scroll i::after{content:"";position:absolute;left:0;top:-50%;width:1px;height:50%;background:#fff;animation:drop 2s infinite}
@@ -390,10 +390,7 @@ body.locked{overflow:hidden}
     </video>
     <div class="hero-in wrap">
       <h1 class="wm rv"><span>Vinarija</span><span>Dvadeset sedam</span></h1>
-      <div class="sub rv d2">
-        <p>Vinogradi, vino i doživljaj — u srcu Šumadije, nadomak Topole.</p>
-        <a class="scroll" href="#o-nama"><i></i>Skrolujte</a>
-      </div>
+      <a class="scroll rv d2" href="#o-nama"><i></i>Skrolujte</a>
     </div>
   </section>
 
