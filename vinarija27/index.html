@@ -154,11 +154,11 @@ body.locked{overflow:hidden}
 .estate{position:relative;background:var(--wine);overflow:hidden}
 .sky{position:relative;height:clamp(720px,92vw,1240px);background:linear-gradient(180deg,var(--wine) 0%,var(--wine) 16%,#6d4652 27%,#9c98a8 36%,#c4c9d4 44%,#d9dde4 52%)}
 .sky::before{content:"";position:absolute;left:0;right:0;bottom:0;z-index:1;height:max(58%,52vw);background:url(img/hero-2-land.jpg) center top/cover;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 16%);mask-image:linear-gradient(180deg,transparent 0%,#000 16%)}
-.cloud{position:absolute;z-index:2;height:auto;max-width:none;pointer-events:none;will-change:transform;filter:drop-shadow(0 24px 30px rgba(0,0,0,.4))}
+.cloud{position:absolute;z-index:2;height:auto;max-width:none;pointer-events:none;will-change:transform;filter:drop-shadow(0 20px 40px rgba(0,0,0,.12))}
 .cloud[data-flip]{transform:scaleX(-1)}
-.cloud.l1{left:-8vw;top:2%;width:56vw}
-.cloud.r1{right:-8vw;top:8%;width:56vw}
-@media (max-width:760px){.cloud.l1,.cloud.r1{width:95vw}.cloud.l1{left:-30vw;top:6%}.cloud.r1{right:-30vw;top:14%}}
+.cloud.l1{left:-12vw;top:3%;width:58vw}
+.cloud.r1{right:-12vw;top:0;width:56vw}
+@media (max-width:760px){.cloud.l1,.cloud.r1{width:100vw}}
 .sky-in{position:absolute;left:0;right:0;top:46%;z-index:3;text-shadow:0 1px 3px rgba(0,0,0,.35),0 2px 30px rgba(0,0,0,.45)}
 .sky-in .caps{margin:30px 0 0;font-size:15px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
 .sky-in p.t{margin:6px 0 0;max-width:600px;font-size:clamp(16px,1.4vw,20px);font-weight:400}
@@ -442,8 +442,8 @@ body.locked{overflow:hidden}
   <!-- IMANJE -->
   <section class="estate" id="imanje">
     <div class="sky">
-      <img class="cloud l1" src="img/vine-real.png" alt="" data-cloud="-1">
-      <img class="cloud r1" src="img/vine-real-r.png" alt="" data-cloud="1">
+      <img class="cloud l1" src="img/cloud-1.png" alt="" data-cloud="-1">
+      <img class="cloud r1" src="img/cloud-2.png" alt="" data-cloud="1" data-flip>
       <div class="sky-in wrap">
         <h2 class="h2 rv"><b>Vinogradi</b><span>srca Šumadije</span></h2>
         <p class="caps rv d1">Brežuljci Oplenca — ručna berba</p>
@@ -622,7 +622,7 @@ body.locked{overflow:hidden}
     onScroll();
     if(reduce)return;
     var r=sky.getBoundingClientRect(),vh=innerHeight,p=Math.min(1,Math.max(0,(vh*.85-r.top)/(r.height*.9)));
-    clouds.forEach(function(c){var d=+c.dataset.cloud;c.style.transform='translateX('+(d*p*55)+'vw) translateY('+(-p*4)+'vh)'});
+    clouds.forEach(function(c){var d=+c.dataset.cloud;c.style.transform='translateX('+(d*p*42)+'vw) translateY('+(-p*6)+'vh)'+(c.hasAttribute('data-flip')?' scaleX(-1)':'')});
     var b=par.parentNode.getBoundingClientRect(),q=(b.top+b.height/2-vh/2)/vh;par.style.transform='translateY('+(q*-4)+'%)';
   }
   var tick=false;addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(function(){fx();tick=false})}},{passive:true});
