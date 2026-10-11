@@ -201,6 +201,9 @@ body.locked{overflow:hidden}
   -webkit-mask-image:linear-gradient(90deg,#000 50%,transparent 100%);mask-image:linear-gradient(90deg,#000 50%,transparent 100%)}
 .duo .r{right:0;width:78%;z-index:1;background-image:url(img/sunset-vineyard.jpg);background-position:60% 30%;
   -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 10%);mask-image:linear-gradient(90deg,transparent 0%,#000 10%)}
+.duo.one{height:auto;aspect-ratio:1280/600;max-height:none;margin-bottom:9vw;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 18%);mask-image:linear-gradient(180deg,transparent 0%,#000 18%)}
+.duo .solo{position:absolute;inset:0;width:100%;background:url(img/cellar-pour.jpg) center/cover;-webkit-mask-image:none;mask-image:none;filter:none}
+@media (max-width:760px){.duo.one{aspect-ratio:auto;height:110vw;margin-bottom:30vw}.duo .solo{position:absolute;height:auto;background-position:62% center}}
 .duo .mist{display:none}
   background:radial-gradient(50% 55% at 50% 50%,rgba(222,227,236,.5) 0%,rgba(222,227,236,.28) 40%,rgba(222,227,236,0) 78%);filter:blur(22px)}
 .duo .tag{position:absolute;bottom:24%;z-index:2;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.6)}
@@ -470,12 +473,8 @@ body.locked{overflow:hidden}
 
   <!-- PODRUM -->
   <section class="cellar" id="podrum">
-    <div class="duo" role="img" aria-label="Gosti nazdravljaju u vinogradu i proslava uz bazen na imanju Vinarije 27, snimak iz vazduha">
-      <div class="ph l"></div>
-      <div class="ph r"></div>
-      <div class="mist"></div>
-      <span class="tag tl">Degustacija u vinogradu</span>
-      <span class="tag tr">Leto na imanju</span>
+    <div class="duo one" role="img" aria-label="Inox tank, hrastovo bure i čaša crnog vina — put vina u Vinariji 27">
+      <div class="ph solo"></div>
     </div>
   </section>
 
