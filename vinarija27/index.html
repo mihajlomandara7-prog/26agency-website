@@ -155,11 +155,11 @@ body.locked{overflow:hidden}
 .sky{position:relative;height:clamp(820px,105vw,1400px);background:linear-gradient(180deg,var(--wine) 0%,var(--wine) 10%,#45222d 18%,#563a48 25%,#6c5f72 32%,#878a9d 39%,#a3abbd 46%,#bcc5d4 53%,#cbd3df 60%,#cdd4e0 100%);overflow:visible}
 .sky::before{content:"";position:absolute;left:0;right:0;bottom:0;z-index:1;height:max(54%,50vw);background:url(img/hero-2-land.jpg) center top/cover;-webkit-mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.35) 12%,rgba(0,0,0,.8) 24%,#000 34%);mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.35) 12%,rgba(0,0,0,.8) 24%,#000 34%)}
 .sky::after{content:"";position:absolute;left:0;right:0;bottom:0;z-index:1;height:max(54%,50vw);pointer-events:none;background:linear-gradient(180deg,rgba(205,212,224,0) 0%,rgba(205,212,224,.45) 10%,rgba(205,212,224,.3) 22%,rgba(205,212,224,0) 38%)}
-.cloud{position:absolute;z-index:2;height:auto;max-width:none;pointer-events:none;will-change:transform}
-.cloud[data-flip]{transform:scaleX(-1)}
-.cloud.l1{left:-14vw;top:-2%;width:66vw}
-.cloud.r1{right:-16vw;top:-4%;width:66vw}
-@media (max-width:760px){.cloud.l1,.cloud.r1{width:120vw}.cloud.l1{left:-50vw}.cloud.r1{right:-50vw}}
+.mist{position:absolute;left:-25vw;width:150vw;max-width:none;height:auto;pointer-events:none;will-change:transform,opacity;z-index:2}
+.mist.m1{top:44%}
+.mist.m2{top:58%}
+.mist.m3{top:72%}
+@media (max-width:760px){.mist{left:-80vw;width:260vw}}
 .sky-in{position:absolute;left:0;right:0;top:44%;z-index:3;text-shadow:0 1px 3px rgba(0,0,0,.35),0 2px 30px rgba(0,0,0,.45)}
 .sky-in .caps{margin:30px 0 0;font-size:15px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
 .sky-in p.t{margin:6px 0 0;max-width:600px;font-size:clamp(16px,1.4vw,20px);font-weight:400}
@@ -443,8 +443,9 @@ body.locked{overflow:hidden}
   <!-- IMANJE -->
   <section class="estate" id="imanje">
     <div class="sky">
-      <img class="cloud l1" src="img/cloud-1.png" alt="" data-cloud="-1">
-      <img class="cloud r1" src="img/cloud-2.png" alt="" data-cloud="1" data-flip>
+      <img class="mist m1" src="img/mist-1.png" alt="" data-mist="1" data-o=".75">
+      <img class="mist m2" src="img/mist-2.png" alt="" data-mist="-1" data-o=".85">
+      <img class="mist m3" src="img/mist-3.png" alt="" data-mist="1" data-o=".9">
       <div class="sky-in wrap">
         <h2 class="h2 rv"><b>Vinogradi</b><span>srca Šumadije</span></h2>
         <p class="caps rv d1">Brežuljci Oplenca — ručna berba</p>
@@ -618,12 +619,12 @@ body.locked{overflow:hidden}
   document.querySelectorAll('.rv,#map').forEach(function(el){io.observe(el)});
 
   // clouds + parallax
-  var clouds=document.querySelectorAll('[data-cloud]'),sky=document.querySelector('.sky'),par=document.getElementById('parallax'),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var clouds=document.querySelectorAll('[data-mist]'),sky=document.querySelector('.sky'),par=document.getElementById('parallax'),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   function fx(){
     onScroll();
     if(reduce)return;
     var r=sky.getBoundingClientRect(),vh=innerHeight,p=Math.min(1,Math.max(0,(vh-r.top)/(vh*1.1)));
-    clouds.forEach(function(c){var d=+c.dataset.cloud;c.style.transform='translateX('+(d*p*22)+'vw) translateY('+(p*12)+'vh)'+(c.hasAttribute('data-flip')?' scaleX(-1)':'')});
+    clouds.forEach(function(c){var d=+c.dataset.mist,f=Math.min(1,Math.max(0,(p-.5)/.45));c.style.opacity=(+c.dataset.o)*(1-f);c.style.transform='translateX('+(d*p*12)+'vw) translateY('+(-p*4)+'vh)'});
     var b=par.parentNode.getBoundingClientRect(),q=(b.top+b.height/2-vh/2)/vh;par.style.transform='translateY('+(q*-4)+'%)';
   }
   var tick=false;addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(function(){fx();tick=false})}},{passive:true});
