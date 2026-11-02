@@ -59,12 +59,27 @@
         <option value="reference_music">Muzika iz referentnog reela</option>
         <option value="uploaded_music">Moja muzika (upload)</option>
         <option value="clip_audio">Originalni zvuk iz mojih klipova</option>
+        <option value="clip_audio_music">Govor iz mojih klipova + muzika ispod (talking-head)</option>
       </select>
-      <label class="drop hidden" id="musicBox" style="margin-top:10px">Izaberi audio fajl
+      <label class="drop hidden" id="musicBox" style="margin-top:10px"><span id="musicLabel">Izaberi audio fajl</span>
         <input type="file" name="music" accept="audio/*,video/*">
         <div class="files" data-for="music"></div>
       </label>
-      <h2 style="margin-top:16px">4. Dodatna uputstva (opciono)</h2>
+      <h2 style="margin-top:16px">4. Titlovi iz govora</h2>
+      <div class="row" style="margin-top:0">
+        <select name="captions" style="flex:2">
+          <option value="auto">Auto (kao u referenci, ako ima govora)</option>
+          <option value="karaoke">Karaoke (aktivna reč žuta)</option>
+          <option value="word_pop">Reč po reč (velika, iskače)</option>
+          <option value="classic">Klasični</option>
+          <option value="none">Bez titlova</option>
+        </select>
+        <select name="language" style="flex:1" title="Jezik govora">
+          <option value="">Jezik: auto</option><option value="sr">Srpski</option><option value="hr">Hrvatski</option>
+          <option value="bs">Bosanski</option><option value="en">Engleski</option><option value="de">Nemački</option>
+        </select>
+      </div>
+      <h2 style="margin-top:16px">5. Dodatna uputstva (opciono)</h2>
       <textarea name="instructions" placeholder="npr. Tekst na srpskom, promoviši 26 Agency, poziv na akciju na kraju: 'Zakaži konsultacije'"></textarea>
       <div class="row"><button id="go" type="submit">Napravi reel</button><span id="upl" class="files"></span></div>
     </div>
@@ -102,7 +117,11 @@ let jobId = null, timer = null, shownVersion = 0;
 document.querySelectorAll('input[type=file]').forEach((inp) => inp.addEventListener('change', () => {
   document.querySelector(`[data-for="${inp.name}"]`).textContent = [...inp.files].map((f) => f.name).join(', ');
 }));
-$('audio_mode').addEventListener('change', (e) => $('musicBox').classList.toggle('hidden', e.target.value !== 'uploaded_music'));
+$('audio_mode').addEventListener('change', (e) => {
+  const v = e.target.value;
+  $('musicBox').classList.toggle('hidden', v !== 'uploaded_music' && v !== 'clip_audio_music');
+  $('musicLabel').textContent = v === 'clip_audio_music' ? 'Muzika za pozadinu (opciono, inače muzika iz reference)' : 'Izaberi audio fajl';
+});
 
 $('form').addEventListener('submit', (e) => {
   e.preventDefault();
@@ -154,10 +173,12 @@ async function poll() {
 function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 
 function showPlan(plan) {
-  $('summary').textContent = `${plan.style_summary || ''} · Kolor: ${plan.color_grade}`;
+  const cap = plan.captions && plan.captions.style !== 'none' ? ` · Titlovi: ${plan.captions.style}` : '';
+  $('summary').textContent = `${plan.style_summary || ''} · Kolor: ${plan.color_grade}${cap}`;
   const rows = plan.segments.map((s, i) => `<tr><td>${i + 1}</td><td>klip ${s.clip_index} @ ${s.source_start}s</td>
-    <td>${s.duration}s${s.speed !== 1 ? ` ×${s.speed}` : ''}</td><td>${s.effect} / ${s.transition_in}</td><td>${esc(s.text)}</td></tr>`);
-  $('plan').innerHTML = `<tr><th>#</th><th>Izvor</th><th>Trajanje</th><th>Efekat</th><th>Tekst</th></tr>${rows.join('')}`;
+    <td>${s.duration}s${s.speed !== 1 ? ` ×${s.speed}` : ''}</td><td>${s.transition_in} → ${s.effect}</td>
+    <td>${esc(s.text)}${s.text && s.text_animation !== 'none' ? ` <span class="files">(${s.text_animation})</span>` : ''}</td></tr>`);
+  $('plan').innerHTML = `<tr><th>#</th><th>Izvor</th><th>Trajanje</th><th>Tranzicija → efekat</th><th>Tekst</th></tr>${rows.join('')}`;
   if (document.activeElement !== $('planJson')) $('planJson').value = JSON.stringify(plan, null, 2);
 }
 

@@ -52,9 +52,15 @@ def create_job(
     music: UploadFile | None = File(None),
     instructions: str = Form(""),
     audio_mode: str = Form("reference_music"),
+    captions: str = Form("auto"),
+    language: str = Form(""),
 ):
-    if audio_mode not in ("reference_music", "uploaded_music", "clip_audio"):
+    if audio_mode not in ("reference_music", "uploaded_music", "clip_audio", "clip_audio_music"):
         raise HTTPException(400, "Nepoznat audio_mode")
+    if captions not in ("auto", "none", "karaoke", "word_pop", "classic"):
+        raise HTTPException(400, "Nepoznat stil titlova")
+    if language and not re.fullmatch(r"[a-z]{2}", language):
+        raise HTTPException(400, "Jezik mora biti kod od 2 slova, npr. sr")
     if not clips:
         raise HTTPException(400, "Dodaj bar jedan klip")
     if len(clips) > 20:
@@ -69,7 +75,7 @@ def create_job(
     if audio_mode == "uploaded_music" and not music_path:
         raise HTTPException(400, "Izabrao si svoju muziku ali nisi uploadovao fajl")
     job.save(reference=str(ref), clip_files=clip_files, music=music_path,
-             instructions=instructions, audio_mode=audio_mode)
+             instructions=instructions, audio_mode=audio_mode, captions=captions, language=language)
     pipeline.start(pipeline.run_new, job)
     return {"id": job.id}
 

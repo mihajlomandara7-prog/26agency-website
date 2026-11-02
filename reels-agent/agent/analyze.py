@@ -101,7 +101,7 @@ def extract_frame(path: Path, t: float, out: Path, width: int = 480) -> Path:
     return out
 
 
-def analyze_reference(path: Path, workdir: Path, max_frames: int = 24) -> dict:
+def analyze_reference(path: Path, workdir: Path, max_frames: int = 16) -> dict:
     info = probe(path)
     dur = info["duration"]
     cuts = [c for c in detect_cuts(path) if 0.1 < c < dur - 0.1]
@@ -119,6 +119,9 @@ def analyze_reference(path: Path, workdir: Path, max_frames: int = 24) -> dict:
     for shot in shots[::step]:
         mid = shot["start"] + shot["duration"] / 2
         shot["frame"] = str(extract_frame(path, mid, frames_dir / f"shot_{shot['index']:03d}.jpg"))
+        if shot["duration"] > 0.6:  # frejm odmah posle reza: vidi se animacija teksta / tranzicija
+            early = shot["start"] + min(0.15, shot["duration"] * 0.2)
+            shot["frame_start"] = str(extract_frame(path, early, frames_dir / f"shot_{shot['index']:03d}_a.jpg"))
     beats = detect_beats(path) if info["has_audio"] else {"bpm": None, "beats": []}
     return {**info, "shots": shots, "bpm": beats["bpm"], "beats": beats["beats"]}
 

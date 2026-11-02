@@ -8,10 +8,15 @@ from pathlib import Path
 
 import anthropic
 
+from .transcribe import transcript_text
+
 MODEL = os.environ.get("REELS_AGENT_MODEL", "claude-opus-5-5")
 
 EFFECTS = ["none", "zoom_in", "zoom_out", "shake"]
-TRANSITIONS = ["cut", "flash", "fade"]
+TRANSITIONS = ["cut", "flash", "fade", "glitch", "zoom_punch", "swipe_left", "swipe_up", "whip", "crossfade",
+               "zoom", "circle", "pixelize", "dip_white"]
+TEXT_ANIMATIONS = ["none", "pop", "fade", "slide_up", "typewriter"]
+CAPTION_STYLES = ["none", "karaoke", "word_pop", "classic"]
 GRADES = ["none", "warm", "cool", "high_contrast", "vintage", "black_white", "vibrant", "moody"]
 TEXT_POS = ["top", "center", "bottom"]
 TEXT_STYLES = ["bold_white", "bold_yellow", "boxed_black", "boxed_white"]
@@ -26,6 +31,16 @@ PLAN_SCHEMA = {
             "items": {"type": "string"},
         },
         "color_grade": {"type": "string", "enum": GRADES},
+        "captions": {
+            "type": "object",
+            "description": "Automatski titlovi iz govora u klipovima (samo ako klipovi imaju govor).",
+            "properties": {
+                "style": {"type": "string", "enum": CAPTION_STYLES},
+                "position": {"type": "string", "enum": TEXT_POS},
+            },
+            "required": ["style", "position"],
+            "additionalProperties": False,
+        },
         "segments": {
             "type": "array",
             "items": {
@@ -40,15 +55,16 @@ PLAN_SCHEMA = {
                     "text": {"type": "string", "description": "Tekst na ekranu tokom segmenta, ili prazan string."},
                     "text_position": {"type": "string", "enum": TEXT_POS},
                     "text_style": {"type": "string", "enum": TEXT_STYLES},
+                    "text_animation": {"type": "string", "enum": TEXT_ANIMATIONS},
                     "reason": {"type": "string", "description": "Kratko: koji referentni kadar ovo imitira i zasto."},
                 },
                 "required": ["clip_index", "source_start", "duration", "speed", "effect", "transition_in",
-                             "text", "text_position", "text_style", "reason"],
+                             "text", "text_position", "text_style", "text_animation", "reason"],
                 "additionalProperties": False,
             },
         },
     },
-    "required": ["style_summary", "clip_notes", "color_grade", "segments"],
+    "required": ["style_summary", "clip_notes", "color_grade", "captions", "segments"],
     "additionalProperties": False,
 }
 
@@ -67,7 +83,16 @@ Pravila:
 - Ako referenca ima tekst na ekranu, napisi tekst u istom fazonu ali o korisnikovom sadrzaju (na jeziku koji \
 korisnik koristi ili koji je u referenci). Ako reference nema tekst, ostavi text prazan.
 - Tekst neka bude kratak (do ~40 karaktera po segmentu).
-- Koristi samo efekte, tranzicije i kolor iz ponudjenih vrednosti, birajuci one najblize referenci.
+- Koristi samo efekte, tranzicije, animacije i kolor iz ponudjenih vrednosti, birajuci one najblize referenci.
+- Tranzicije: cut (obican rez - najcesci u reelsovima), flash (beli blic), fade (iz crnog), glitch (RGB/noise \
+glitch), zoom_punch (udarni zoom na rezu), swipe_left/swipe_up (slajd), whip (whip pan blur), crossfade, zoom, \
+circle, pixelize, dip_white. Ne preteruj - koristi ih tamo gde ih ima i referenca, ili na udarcima/dropu.
+- Animacije teksta: pop (iskoci), fade, slide_up, typewriter (slovo po slovo), none.
+- Titlovi (captions): ako klipovi imaju govor (dat je transkript), izaberi stil titlova najblizi referenci \
+(karaoke = fraza sa istaknutom aktivnom reci, word_pop = jedna velika rec po rec, classic = obicni). Ako nema \
+govora, style = none. Kad ima titlova, tekst na ekranu stavljaj tako da se ne preklapa sa njima.
+- Kod talking-head materijala biraj delove klipova gde je izgovorena cela misao (vidi vremena u transkriptu), \
+ne seci usred reci.
 - Uputstva korisnika imaju prednost nad referencom."""
 
 
@@ -109,27 +134,38 @@ def _reference_text(ref: dict) -> str:
     return (
         f"REFERENTNI REEL: trajanje {ref['duration']}s, {ref.get('width')}x{ref.get('height')}, "
         f"{len(shots)} kadrova, BPM ~{ref['bpm']}.\n"
-        f"Kadrovi (vremena rezova): {json.dumps(shots)}\n"
+        + (f"Govor/voiceover u referenci:\n{transcript_text(ref['transcript']['words'])}\n"
+           if ref.get("transcript", {}).get("words") else "")
+        + f"Kadrovi (vremena rezova): {json.dumps(shots)}\n"
         f"Udarci u muzici (s): {json.dumps(beats)}\n"
     )
 
 
-def _clips_text(clips: list[dict]) -> str:
+def _clips_text(clips: list[dict], transcripts: dict | None = None) -> str:
     rows = [{"clip_index": c["index"], "name": c["name"], "duration": c["duration"],
              "orientation": "vertical" if c.get("height", 0) > c.get("width", 0) else "horizontal",
              "has_audio": c["has_audio"]} for c in clips]
-    return f"KORISNIKOVI KLIPOVI: {json.dumps(rows, ensure_ascii=False)}\n"
+    text = f"KORISNIKOVI KLIPOVI: {json.dumps(rows, ensure_ascii=False)}\n"
+    for idx, tr in sorted((transcripts or {}).items(), key=lambda kv: int(kv[0])):
+        if tr.get("words"):
+            text += f"\nGOVOR U KLIPU {idx} (jezik: {tr.get('language')}):\n{transcript_text(tr['words'])}\n"
+    return text
 
 
-def make_plan(ref: dict, clips: list[dict], instructions: str = "") -> dict:
+def make_plan(ref: dict, clips: list[dict], instructions: str = "", transcripts: dict | None = None) -> dict:
     content: list[dict] = [{"type": "text", "text": _reference_text(ref) + "\nFrejmovi iz referentnih kadrova (sredina kadra):"}]
     for shot in ref["shots"]:
         if shot.get("frame"):
             content.append({"type": "text", "text": f"REF kadar {shot['index']} ({shot['start']}-{shot['end']}s):"})
+            if shot.get("frame_start"):
+                content.append({"type": "text", "text": "(odmah posle reza)"})
+                content.append(_img(shot["frame_start"]))
+                content.append({"type": "text", "text": "(sredina kadra)"})
             content.append(_img(shot["frame"]))
-    content.append({"type": "text", "text": "\n" + _clips_text(clips) + "Frejmovi iz korisnikovih klipova:"})
+    content.append({"type": "text", "text": "\n" + _clips_text(clips, transcripts) + "Frejmovi iz korisnikovih klipova:"})
+    per_clip = 3 if len(clips) <= 15 else 2
     for c in clips:
-        for f in c["frames"]:
+        for f in c["frames"][:per_clip]:
             content.append({"type": "text", "text": f"KLIP {c['index']} @ {f['t']}s:"})
             content.append(_img(f["path"]))
     content.append({"type": "text", "text": (
@@ -139,10 +175,11 @@ def make_plan(ref: dict, clips: list[dict], instructions: str = "") -> dict:
     return sanitize(_call(content), clips)
 
 
-def revise_plan(ref: dict, clips: list[dict], plan: dict, feedback: str, instructions: str = "") -> dict:
+def revise_plan(ref: dict, clips: list[dict], plan: dict, feedback: str, instructions: str = "",
+                transcripts: dict | None = None) -> dict:
     notes = "\n".join(f"KLIP {i}: {n}" for i, n in enumerate(plan.get("clip_notes", [])))
     content = [{"type": "text", "text": (
-        _reference_text(ref) + _clips_text(clips) +
+        _reference_text(ref) + _clips_text(clips, transcripts) +
         f"Opis sadrzaja klipova (iz ranije analize):\n{notes}\n\n"
         f"Prvobitna uputstva korisnika: {instructions or '(nema)'}\n\n"
         f"TRENUTNI PLAN:\n{json.dumps(plan, ensure_ascii=False)}\n\n"
@@ -169,7 +206,8 @@ def sanitize(plan: dict, clips: list[dict]) -> dict:
         start = min(max(float(seg.get("source_start") or 0.0), 0.0), max(clip["duration"] - src_len - 0.02, 0.0))
         seg.update(speed=round(speed, 3), duration=round(dur, 3), source_start=round(start, 3))
         for key, allowed, default in (("effect", EFFECTS, "none"), ("transition_in", TRANSITIONS, "cut"),
-                                      ("text_position", TEXT_POS, "center"), ("text_style", TEXT_STYLES, "bold_white")):
+                                      ("text_position", TEXT_POS, "center"), ("text_style", TEXT_STYLES, "bold_white"),
+                                      ("text_animation", TEXT_ANIMATIONS, "none")):
             if seg.get(key) not in allowed:
                 seg[key] = default
         seg["text"] = str(seg.get("text") or "")
@@ -179,4 +217,7 @@ def sanitize(plan: dict, clips: list[dict]) -> dict:
     plan["segments"] = fixed
     if plan.get("color_grade") not in GRADES:
         plan["color_grade"] = "none"
+    cap = plan.get("captions") if isinstance(plan.get("captions"), dict) else {}
+    plan["captions"] = {"style": cap.get("style") if cap.get("style") in CAPTION_STYLES else "none",
+                        "position": cap.get("position") if cap.get("position") in TEXT_POS else "bottom"}
     return plan
