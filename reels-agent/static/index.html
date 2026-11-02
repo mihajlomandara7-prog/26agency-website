@@ -40,6 +40,7 @@
   <h1>Reels <span>Agent</span></h1>
   <p class="sub">Pošalji reel kakav želiš + svoj materijal. Agent analizira tempo, rezove, tekst i stil i montira tvoj video isto tako.</p>
 
+  <div id="warn" class="card hidden" style="border-color:var(--accent);margin-bottom:16px"></div>
   <form id="form" class="grid">
     <div class="card">
       <h2>1. Referentni reel</h2>
@@ -195,6 +196,12 @@ $('renderBtn').onclick = () => {
 $('newBtn').onclick = () => { history.replaceState(null, '', '/'); location.reload(); };
 
 if (location.hash.length > 1) openJob(location.hash.slice(1));
+fetch('/api/health').then((r) => r.json()).then((h) => {
+  const msgs = [];
+  if (!h.api_key) msgs.push('API ključ nije podešen: napravi fajl <b>reels-agent/.env</b> sa linijom <code>ANTHROPIC_API_KEY=sk-ant-...</code> i restartuj server.');
+  if (!h.ffmpeg) msgs.push('ffmpeg nije instaliran ili nije u PATH-u.');
+  if (msgs.length) { $('warn').innerHTML = msgs.join('<br>'); $('warn').classList.remove('hidden'); }
+}).catch(() => {});
 </script>
 </body>
 </html>

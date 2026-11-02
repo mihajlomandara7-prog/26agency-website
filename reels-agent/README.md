@@ -27,9 +27,12 @@ Treba ti Python 3.10+ i **ffmpeg 6+** (sa libass, što imaju standardne verzije)
 cd reels-agent
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-export ANTHROPIC_API_KEY=sk-ant-...                  # Windows: set ANTHROPIC_API_KEY=sk-ant-...
+cp .env.example .env                                 # Windows: copy .env.example .env
+# otvori .env i upiši svoj ključ: ANTHROPIC_API_KEY=sk-ant-...
 python app.py
 ```
+
+**API ključ** napraviš na https://console.anthropic.com/settings/keys (klikni „Create Key“). Na Billing stranici treba da dodaš kredit. Fajl `.env` se ne commituje, pa ključ ostaje samo na tvom računaru.
 
 Pri prvom pravljenju titlova Whisper preuzme model „small“ (~470 MB) sa HuggingFace-a, samo jednom.
 

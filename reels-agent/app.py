@@ -10,7 +10,23 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from agent import pipeline
+
+def _load_env(path: Path) -> None:
+    """Ucitava KLJUC=vrednost iz .env fajla (bez dodatnih paketa). Postojece env varijable imaju prednost."""
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8-sig").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip().removeprefix("export ").strip()
+        os.environ.setdefault(key, value.strip().strip('"').strip("'"))
+
+
+_load_env(Path(__file__).parent / ".env")
+
+from agent import pipeline  # noqa: E402  (posle .env, da REELS_AGENT_* podesavanja vaze)
 
 app = FastAPI(title="Reels Agent")
 STATIC = Path(__file__).parent / "static"
@@ -133,7 +149,18 @@ def rerender(job_id: str, body: PlanIn):
     return {"ok": True}
 
 
+@app.get("/api/health")
+def health():
+    return {"api_key": bool(os.environ.get("ANTHROPIC_API_KEY")), "ffmpeg": bool(shutil.which("ffmpeg"))}
+
+
 if __name__ == "__main__":
     import uvicorn
+
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        print("\n[!] ANTHROPIC_API_KEY nije podesen. Napravi fajl reels-agent/.env sa linijom:\n"
+              "    ANTHROPIC_API_KEY=sk-ant-...\n    (pogledaj .env.example)\n")
+    if not shutil.which("ffmpeg"):
+        print("[!] ffmpeg nije instaliran ili nije u PATH-u.\n")
 
     uvicorn.run(app, host=os.environ.get("HOST", "127.0.0.1"), port=int(os.environ.get("PORT", "8000")))
