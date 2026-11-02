@@ -172,7 +172,9 @@ def rerender(job_id: str, body: PlanIn):
 
 @app.get("/api/health")
 def health():
-    return {"api_key": bool(os.environ.get("ANTHROPIC_API_KEY")), "ffmpeg": bool(shutil.which("ffmpeg"))}
+    key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    looks_ok = key.startswith("sk-ant-") and "..." not in key and len(key) > 40
+    return {"api_key": looks_ok, "ffmpeg": bool(shutil.which("ffmpeg"))}
 
 
 if __name__ == "__main__":

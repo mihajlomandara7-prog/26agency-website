@@ -232,7 +232,7 @@ document.addEventListener('paste', (e) => {
 if (location.hash.length > 1) openJob(location.hash.slice(1));
 fetch('/api/health').then((r) => r.json()).then((h) => {
   const msgs = [];
-  if (!h.api_key) msgs.push('API ključ nije podešen: napravi fajl <b>reels-agent/.env</b> sa linijom <code>ANTHROPIC_API_KEY=sk-ant-...</code> i restartuj server.');
+  if (!h.api_key) msgs.push('API ključ nije dobar (ili je upisan skraćeni ključ sa tri tačke). Napravi novi ključ u Anthropic Console, kopiraj ga odmah iz prozora koji se pojavi, nalepi u fajl <b>.env</b> posle <code>ANTHROPIC_API_KEY=</code>, sačuvaj i ponovo pokreni start.bat.');
   if (!h.ffmpeg) msgs.push('ffmpeg nije instaliran ili nije u PATH-u.');
   if (msgs.length) { $('warn').innerHTML = msgs.join('<br>'); $('warn').classList.remove('hidden'); }
 }).catch(() => {});

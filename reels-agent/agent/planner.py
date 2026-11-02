@@ -109,17 +109,30 @@ def _client() -> anthropic.Anthropic:
 
 def _call(content: list[dict]) -> dict:
     client = _client()
-    with client.beta.messages.stream(
-        model=MODEL,
-        max_tokens=32000,
-        system=SYSTEM,
-        thinking={"type": "adaptive"},
-        output_config={"effort": "high", "format": {"type": "json_schema", "schema": PLAN_SCHEMA}},
-        betas=["server-side-fallback-2026-07-01"],
-        fallbacks="default",
-        messages=[{"role": "user", "content": content}],
-    ) as stream:
-        msg = stream.get_final_message()
+    try:
+        with client.beta.messages.stream(
+            model=MODEL,
+            max_tokens=32000,
+            system=SYSTEM,
+            thinking={"type": "adaptive"},
+            output_config={"effort": "high", "format": {"type": "json_schema", "schema": PLAN_SCHEMA}},
+            betas=["server-side-fallback-2026-07-01"],
+            fallbacks="default",
+            messages=[{"role": "user", "content": content}],
+        ) as stream:
+            msg = stream.get_final_message()
+    except anthropic.AuthenticationError as e:
+        raise RuntimeError(
+            "API kljuc nije ispravan. Napravi novi kljuc na console.anthropic.com/settings/keys, kopiraj ga "
+            "ODMAH iz prozora koji se pojavi (ne iz tabele, tamo je skracen sa ...), upisi u fajl .env "
+            "i ponovo pokreni start.bat."
+        ) from e
+    except anthropic.PermissionDeniedError as e:
+        raise RuntimeError(f"API kljuc nema pristup modelu {MODEL}: {e}") from e
+    except anthropic.BadRequestError as e:
+        if "credit" in str(e).lower():
+            raise RuntimeError("Nema dovoljno kredita na Anthropic nalogu (Console -> Billing).") from e
+        raise
     if msg.stop_reason == "refusal":
         raise RuntimeError("Model je odbio zahtev (refusal). Probaj sa drugim materijalom ili uputstvom.")
     if msg.stop_reason == "max_tokens":
