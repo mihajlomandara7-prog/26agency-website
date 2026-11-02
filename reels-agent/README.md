@@ -2,8 +2,15 @@
 
 Pošalješ **referentni reel** (video kakav želiš) + **svoj materijal** (klipove), a agent napravi isti takav reel od tvog materijala: isti tempo rezova, ritam po muzici, sličan tekst na ekranu, efekte i kolor.
 
+## Najbrži start (Windows)
+1. **Dvaput klikni `start.bat`** u folderu `reels-agent`. Prvi put sve sam instalira, a ako `.env` ne postoji, otvori ga da upišeš API ključ.
+2. Browser se sam otvori. **Nalepi link** reela sa Instagrama, Pinteresta ili TikToka, **ubaci svoje slike i klipove** i klikni **Napravi reel**.
+
+Savet: desni klik na `start.bat`, pa *Send to → Desktop (create shortcut)*, i ikonica će ti biti na desktopu.
+
 ## Kako radi
 
+1. **Preuzimanje reference** sa linka (`agent/download.py`, yt-dlp). Ako Instagram traži prijavu, koristi tvoju prijavu iz browsera.
 1. **Analiza reference** (`agent/analyze.py`, ffmpeg): pronalazi tačna vremena rezova, BPM i udarce u muzici i vadi po jedan frejm iz svakog kadra.
 2. **Analiza tvojih klipova**: trajanje, orijentacija i 3 frejma po klipu.
 3. **Prepoznavanje govora** (`agent/transcribe.py`, Whisper lokalno): svaka reč dobija vreme, za titlove i da Claude ne seče usred rečenice.

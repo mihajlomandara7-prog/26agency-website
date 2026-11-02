@@ -32,57 +32,71 @@
   td, th { border-bottom:1px solid var(--line); padding:6px 4px; text-align:left; vertical-align:top; }
   th { color:var(--muted); font-weight:500; }
   .hidden { display:none; }
+  form.simple { max-width:680px; margin:0 auto; display:flex; flex-direction:column; gap:14px; }
+  .step h2 { text-transform:none; letter-spacing:0; font-size:18px; color:var(--text); display:flex; align-items:center; gap:10px; }
+  .num { background:var(--accent); color:#fff; border-radius:50%; width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center; font-size:15px; flex:none; }
+  input.big { width:100%; font:inherit; font-size:16px; padding:14px; border-radius:10px; border:1px solid var(--line); background:#101014; color:var(--text); }
+  input.big:focus { outline:2px solid var(--accent); }
+  button.huge { width:100%; padding:18px; font-size:19px; }
+  details.alt summary { margin-top:10px; font-size:14px; }
+  details.alt h3 { font-size:14px; color:var(--muted); margin:14px 0 6px; font-weight:600; }
+  label.drop.over { border-color:var(--accent); color:var(--text); }
   details summary { cursor:pointer; color:var(--muted); margin-top:10px; }
 </style>
 </head>
 <body>
 <main>
   <h1>Reels <span>Agent</span></h1>
-  <p class="sub">Pošalji reel kakav želiš + svoj materijal. Agent analizira tempo, rezove, tekst i stil i montira tvoj video isto tako.</p>
+  <p class="sub">Nalepi link reela koji ti se sviđa, ubaci svoje slike i klipove, i AI napravi isti takav reel od tvog materijala.</p>
 
   <div id="warn" class="card hidden" style="border-color:var(--accent);margin-bottom:16px"></div>
-  <form id="form" class="grid">
-    <div class="card">
-      <h2>1. Referentni reel</h2>
-      <label class="drop">Klikni i izaberi video koji želiš da kopiraš
-        <input type="file" name="reference" required>
-        <div class="files" data-for="reference"></div>
-      </label>
-      <h2 style="margin-top:16px">2. Tvoj materijal</h2>
-      <label class="drop">Izaberi svoje klipove i slike (više fajlova odjednom)
-        <input type="file" name="clips" multiple required>
+  <form id="form" class="simple">
+    <div class="card step">
+      <h2><span class="num">1</span> Nalepi link reela koji želiš da kopiraš</h2>
+      <input type="url" name="reference_url" id="refUrl" class="big" placeholder="https://www.instagram.com/reel/...   (Instagram, Pinterest, TikTok)" autocomplete="off">
+      <details class="alt"><summary>ili izaberi video sa računara</summary>
+        <input type="file" name="reference" id="refFile">
+      </details>
+    </div>
+    <div class="card step">
+      <h2><span class="num">2</span> Ubaci svoje slike i klipove</h2>
+      <label class="drop" id="clipDrop">Klikni ovde ili prevuci fajlove (možeš više odjednom)
+        <input type="file" name="clips" id="clipsInput" multiple>
         <div class="files" data-for="clips"></div>
       </label>
     </div>
-    <div class="card">
-      <h2>3. Zvuk</h2>
-      <select name="audio_mode" id="audio_mode">
-        <option value="reference_music">Muzika iz referentnog reela</option>
-        <option value="uploaded_music">Moja muzika (upload)</option>
-        <option value="clip_audio">Originalni zvuk iz mojih klipova</option>
-        <option value="clip_audio_music">Govor iz mojih klipova + muzika ispod (talking-head)</option>
-      </select>
-      <label class="drop hidden" id="musicBox" style="margin-top:10px"><span id="musicLabel">Izaberi audio fajl</span>
-        <input type="file" name="music" accept="audio/*,video/*">
-        <div class="files" data-for="music"></div>
-      </label>
-      <h2 style="margin-top:16px">4. Titlovi iz govora</h2>
-      <div class="row" style="margin-top:0">
-        <select name="captions" style="flex:2">
-          <option value="auto">Auto (kao u referenci, ako ima govora)</option>
-          <option value="karaoke">Karaoke (aktivna reč žuta)</option>
-          <option value="word_pop">Reč po reč (velika, iskače)</option>
-          <option value="classic">Klasični</option>
-          <option value="none">Bez titlova</option>
+    <div class="card step">
+      <button id="go" type="submit" class="huge">Napravi reel ✨</button>
+      <div id="upl" class="files" style="text-align:center;margin-top:8px"></div>
+      <details class="alt"><summary>Dodatne opcije (nije obavezno)</summary>
+        <h3>Zvuk</h3>
+        <select name="audio_mode" id="audio_mode">
+          <option value="reference_music">Muzika iz reela sa linka</option>
+          <option value="uploaded_music">Moja muzika (upload)</option>
+          <option value="clip_audio">Originalni zvuk iz mojih klipova</option>
+          <option value="clip_audio_music">Moj govor iz klipova + muzika ispod</option>
         </select>
-        <select name="language" style="flex:1" title="Jezik govora">
-          <option value="">Jezik: auto</option><option value="sr">Srpski</option><option value="hr">Hrvatski</option>
-          <option value="bs">Bosanski</option><option value="en">Engleski</option><option value="de">Nemački</option>
-        </select>
-      </div>
-      <h2 style="margin-top:16px">5. Dodatna uputstva (opciono)</h2>
-      <textarea name="instructions" placeholder="npr. Tekst na srpskom, promoviši 26 Agency, poziv na akciju na kraju: 'Zakaži konsultacije'"></textarea>
-      <div class="row"><button id="go" type="submit">Napravi reel</button><span id="upl" class="files"></span></div>
+        <label class="drop hidden" id="musicBox" style="margin-top:10px"><span id="musicLabel">Izaberi audio fajl</span>
+          <input type="file" name="music" accept="audio/*,video/*">
+          <div class="files" data-for="music"></div>
+        </label>
+        <h3>Titlovi iz govora</h3>
+        <div class="row" style="margin-top:0">
+          <select name="captions" style="flex:2">
+            <option value="auto">Auto (kao u referenci, ako ima govora)</option>
+            <option value="karaoke">Karaoke (aktivna reč žuta)</option>
+            <option value="word_pop">Reč po reč (velika, iskače)</option>
+            <option value="classic">Klasični</option>
+            <option value="none">Bez titlova</option>
+          </select>
+          <select name="language" style="flex:1" title="Jezik govora">
+            <option value="">Jezik: auto</option><option value="sr">Srpski</option><option value="hr">Hrvatski</option>
+            <option value="bs">Bosanski</option><option value="en">Engleski</option><option value="de">Nemački</option>
+          </select>
+        </div>
+        <h3>Uputstva za AI</h3>
+        <textarea name="instructions" placeholder="npr. Tekst na srpskom, promoviši 26 Agency, na kraju: 'Zakaži konsultacije'"></textarea>
+      </details>
     </div>
   </form>
 
@@ -116,7 +130,8 @@ const $ = (id) => document.getElementById(id);
 let jobId = null, timer = null, shownVersion = 0;
 
 document.querySelectorAll('input[type=file]').forEach((inp) => inp.addEventListener('change', () => {
-  document.querySelector(`[data-for="${inp.name}"]`).textContent = [...inp.files].map((f) => f.name).join(', ');
+  const box = document.querySelector(`[data-for="${inp.name}"]`);
+  if (box) box.textContent = [...inp.files].map((f) => f.name).join(', ');
 }));
 $('audio_mode').addEventListener('change', (e) => {
   const v = e.target.value;
@@ -126,6 +141,9 @@ $('audio_mode').addEventListener('change', (e) => {
 
 $('form').addEventListener('submit', (e) => {
   e.preventDefault();
+  const hasRef = $('refUrl').value.trim() || $('refFile').files.length;
+  if (!hasRef) { $('refUrl').focus(); return alert('Prvo nalepi link reela (korak 1).'); }
+  if (!$('clipsInput').files.length) return alert('Ubaci bar jedan svoj klip ili sliku (korak 2).');
   const fd = new FormData(e.target);
   $('go').disabled = true;
   const xhr = new XMLHttpRequest();
@@ -195,6 +213,22 @@ $('renderBtn').onclick = () => {
 };
 $('newBtn').onclick = () => { history.replaceState(null, '', '/'); location.reload(); };
 
+const drop = $('clipDrop');
+['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, () => drop.classList.remove('over')));
+drop.addEventListener('drop', (e) => {
+  e.preventDefault();
+  const dt = new DataTransfer();
+  [...$('clipsInput').files, ...e.dataTransfer.files].forEach((f) => dt.items.add(f));
+  $('clipsInput').files = dt.files;
+  $('clipsInput').dispatchEvent(new Event('change'));
+});
+// Ctrl+V bilo gde na stranici -> link ide u polje 1
+document.addEventListener('paste', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  const t = (e.clipboardData.getData('text') || '').trim();
+  if (/^https?:\/\//i.test(t)) { $('refUrl').value = t; $('refUrl').focus(); }
+});
 if (location.hash.length > 1) openJob(location.hash.slice(1));
 fetch('/api/health').then((r) => r.json()).then((h) => {
   const msgs = [];

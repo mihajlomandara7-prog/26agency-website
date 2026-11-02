@@ -8,7 +8,7 @@ import traceback
 import uuid
 from pathlib import Path
 
-from . import analyze, planner, render, transcribe
+from . import analyze, download, planner, render, transcribe
 
 DATA = Path(__file__).resolve().parent.parent / "data" / "jobs"
 _lock = threading.Lock()
@@ -85,6 +85,13 @@ def _guard(job: Job, fn) -> None:
 def run_new(job: Job) -> None:
     def work():
         data = job.save(status="running")
+        if data.get("reference_url") and not data.get("reference"):
+            job.step("Preuzimam video sa linka...")
+            path = download.download_reference(data["reference_url"], job.dir / "input", log=job.step)
+            if analyze.media_kind(path) != "video":
+                raise RuntimeError("Na linku nije video (mozda je slika ili carousel bez videa).")
+            data = job.save(reference=str(path))
+            job.step("Video sa linka preuzet")
         job.step("Analiziram referentni video (rezovi, ritam, kadrovi)")
         ref = analyze.analyze_reference(Path(data["reference"]), job.dir)
         job.step(f"Referenca: {ref['duration']}s, {len(ref['shots'])} kadrova, BPM ~{ref['bpm']}")

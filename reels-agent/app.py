@@ -4,6 +4,9 @@ from __future__ import annotations
 import os
 import re
 import shutil
+import sys
+import threading
+import webbrowser
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
@@ -26,7 +29,7 @@ def _load_env(path: Path) -> None:
 
 _load_env(Path(__file__).parent / ".env")
 
-from agent import analyze, pipeline  # noqa: E402  (posle .env, da REELS_AGENT_* podesavanja vaze)
+from agent import analyze, download, pipeline  # noqa: E402  (posle .env, da REELS_AGENT_* podesavanja vaze)
 
 app = FastAPI(title="Reels Agent")
 STATIC = Path(__file__).parent / "static"
@@ -66,7 +69,8 @@ def index():
 
 @app.post("/api/jobs")
 def create_job(
-    reference: UploadFile = File(...),
+    reference: UploadFile | None = File(None),
+    reference_url: str = Form(""),
     clips: list[UploadFile] = File(...),
     music: UploadFile | None = File(None),
     instructions: str = Form(""),
@@ -86,7 +90,12 @@ def create_job(
         raise HTTPException(400, "Maksimalno 20 klipova")
     job = pipeline.Job.create()
     inp = job.dir / "input"
-    ref, _ = _store(reference, inp / f"reference_{_safe(reference.filename)}", {"video"})
+    reference_url = reference_url.strip()
+    ref = None
+    if reference is not None and reference.filename:
+        ref, _ = _store(reference, inp / f"reference_{_safe(reference.filename)}", {"video"})
+    elif not download.valid_url(reference_url):
+        raise HTTPException(400, "Nalepi link do videa (npr. https://www.instagram.com/reel/...) ili izaberi video fajl")
     clip_files, photo_clips = [], []
     for i, c in enumerate(clips):
         path, kind = _store(c, inp / f"clip{i:02d}_{_safe(c.filename)}", {"video", "image"})
@@ -102,7 +111,7 @@ def create_job(
         music_path = str(_store(music, inp / f"music_{_safe(music.filename)}", {"audio", "video"})[0])
     if audio_mode == "uploaded_music" and not music_path:
         raise HTTPException(400, "Izabrao si svoju muziku ali nisi uploadovao fajl")
-    job.save(reference=str(ref), clip_files=clip_files, photo_clips=photo_clips, music=music_path,
+    job.save(reference=str(ref) if ref else None, reference_url=reference_url, clip_files=clip_files, photo_clips=photo_clips, music=music_path,
              instructions=instructions, audio_mode=audio_mode, captions=captions, language=language)
     pipeline.start(pipeline.run_new, job)
     return {"id": job.id}
@@ -175,4 +184,7 @@ if __name__ == "__main__":
     if not shutil.which("ffmpeg"):
         print("[!] ffmpeg nije instaliran ili nije u PATH-u.\n")
 
+    if "--open" in sys.argv:  # start.bat: otvori browser kad se server digne
+        url = f"http://127.0.0.1:{os.environ.get('PORT', '8000')}"
+        threading.Timer(2.0, webbrowser.open, args=(url,)).start()
     uvicorn.run(app, host=os.environ.get("HOST", "127.0.0.1"), port=int(os.environ.get("PORT", "8000")))
