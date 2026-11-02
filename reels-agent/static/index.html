@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reels Agent</title>
+<style>
+  :root { --bg:#0e0e11; --card:#18181d; --line:#2a2a31; --text:#ececf1; --muted:#9a9aa6; --accent:#ff3d6e; --ok:#3ddc97; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; }
+  main { max-width:1100px; margin:0 auto; padding:24px 16px 60px; }
+  h1 { font-size:26px; margin:0 0 4px; } h1 span { color:var(--accent); }
+  p.sub { color:var(--muted); margin:0 0 24px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:800px) { .grid { grid-template-columns:1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; }
+  .card h2 { font-size:15px; margin:0 0 10px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+  label.drop { display:block; border:2px dashed var(--line); border-radius:12px; padding:18px; text-align:center; cursor:pointer; color:var(--muted); }
+  label.drop:hover { border-color:var(--accent); color:var(--text); }
+  label.drop input { display:none; }
+  .files { font-size:13px; color:var(--text); margin-top:6px; word-break:break-all; }
+  textarea, select { width:100%; background:#101014; color:var(--text); border:1px solid var(--line); border-radius:10px; padding:10px; font:inherit; }
+  textarea { min-height:80px; resize:vertical; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:10px; padding:12px 18px; font:600 15px system-ui; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  button.ghost { background:transparent; border:1px solid var(--line); color:var(--text); }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:12px; }
+  .log { font:12px/1.6 ui-monospace, Menlo, monospace; color:var(--muted); max-height:220px; overflow:auto; white-space:pre-wrap; }
+  .status { font-weight:600; } .status.done { color:var(--ok); } .status.error { color:var(--accent); }
+  video { width:100%; max-height:70vh; background:#000; border-radius:12px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  td, th { border-bottom:1px solid var(--line); padding:6px 4px; text-align:left; vertical-align:top; }
+  th { color:var(--muted); font-weight:500; }
+  .hidden { display:none; }
+  details summary { cursor:pointer; color:var(--muted); margin-top:10px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Reels <span>Agent</span></h1>
+  <p class="sub">Pošalji reel kakav želiš + svoj materijal. Agent analizira tempo, rezove, tekst i stil i montira tvoj video isto tako.</p>
+
+  <form id="form" class="grid">
+    <div class="card">
+      <h2>1. Referentni reel</h2>
+      <label class="drop">Klikni i izaberi video koji želiš da kopiraš
+        <input type="file" name="reference" accept="video/*" required>
+        <div class="files" data-for="reference"></div>
+      </label>
+      <h2 style="margin-top:16px">2. Tvoj materijal</h2>
+      <label class="drop">Izaberi svoje klipove (više fajlova odjednom)
+        <input type="file" name="clips" accept="video/*" multiple required>
+        <div class="files" data-for="clips"></div>
+      </label>
+    </div>
+    <div class="card">
+      <h2>3. Zvuk</h2>
+      <select name="audio_mode" id="audio_mode">
+        <option value="reference_music">Muzika iz referentnog reela</option>
+        <option value="uploaded_music">Moja muzika (upload)</option>
+        <option value="clip_audio">Originalni zvuk iz mojih klipova</option>
+      </select>
+      <label class="drop hidden" id="musicBox" style="margin-top:10px">Izaberi audio fajl
+        <input type="file" name="music" accept="audio/*,video/*">
+        <div class="files" data-for="music"></div>
+      </label>
+      <h2 style="margin-top:16px">4. Dodatna uputstva (opciono)</h2>
+      <textarea name="instructions" placeholder="npr. Tekst na srpskom, promoviši 26 Agency, poziv na akciju na kraju: 'Zakaži konsultacije'"></textarea>
+      <div class="row"><button id="go" type="submit">Napravi reel</button><span id="upl" class="files"></span></div>
+    </div>
+  </form>
+
+  <section id="jobView" class="grid hidden" style="margin-top:16px">
+    <div class="card">
+      <h2>Rezultat</h2>
+      <div><span class="status" id="status">…</span> <span id="step" class="files"></span></div>
+      <video id="video" controls playsinline class="hidden"></video>
+      <div class="row hidden" id="actions">
+        <a id="download"><button type="button">Preuzmi MP4</button></a>
+        <button type="button" class="ghost" id="newBtn">Novi reel</button>
+      </div>
+      <details><summary>Log agenta</summary><div class="log" id="log"></div></details>
+    </div>
+    <div class="card">
+      <h2>Ispravke</h2>
+      <textarea id="feedback" placeholder="npr. Brži rezovi na početku, promeni tekst u drugom kadru u 'Rezultati za 30 dana', završi kadrom sa logom"></textarea>
+      <div class="row"><button type="button" id="reviseBtn">Ispravi video</button></div>
+      <h2 style="margin-top:16px">Plan montaže</h2>
+      <div id="summary" class="files"></div>
+      <table id="plan"></table>
+      <details><summary>Ručno izmeni plan (JSON)</summary>
+        <textarea id="planJson" style="min-height:220px;font:12px ui-monospace,monospace"></textarea>
+        <div class="row"><button type="button" class="ghost" id="renderBtn">Renderuj ovaj plan</button></div>
+      </details>
+    </div>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+let jobId = null, timer = null, shownVersion = 0;
+
+document.querySelectorAll('input[type=file]').forEach((inp) => inp.addEventListener('change', () => {
+  document.querySelector(`[data-for="${inp.name}"]`).textContent = [...inp.files].map((f) => f.name).join(', ');
+}));
+$('audio_mode').addEventListener('change', (e) => $('musicBox').classList.toggle('hidden', e.target.value !== 'uploaded_music'));
+
+$('form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  $('go').disabled = true;
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/jobs');
+  xhr.upload.onprogress = (ev) => { if (ev.lengthComputable) $('upl').textContent = `Upload ${Math.round(ev.loaded / ev.total * 100)}%`; };
+  xhr.onload = () => {
+    $('go').disabled = false; $('upl').textContent = '';
+    const res = JSON.parse(xhr.responseText || '{}');
+    if (xhr.status !== 200) return alert(res.detail || 'Greška pri uploadu');
+    openJob(res.id);
+  };
+  xhr.onerror = () => { $('go').disabled = false; alert('Upload nije uspeo'); };
+  xhr.send(fd);
+});
+
+function openJob(id) {
+  jobId = id; shownVersion = 0;
+  history.replaceState(null, '', `#${id}`);
+  $('form').classList.add('hidden'); $('jobView').classList.remove('hidden');
+  poll();
+}
+
+async function poll() {
+  clearTimeout(timer);
+  const r = await fetch(`/api/jobs/${jobId}`);
+  if (!r.ok) { $('status').textContent = 'Job ne postoji'; return; }
+  const j = await r.json();
+  const st = $('status');
+  st.textContent = { created: 'Na čekanju', running: 'Agent radi…', done: 'Gotovo ✓', error: 'Greška' }[j.status] || j.status;
+  st.className = `status ${j.status}`;
+  $('step').textContent = j.status === 'error' ? j.error : j.step;
+  $('log').textContent = (j.log || []).join('\n');
+  const busy = j.status === 'running' || j.status === 'created';
+  $('reviseBtn').disabled = busy || !j.plan; $('renderBtn').disabled = busy || !j.plan;
+  if (j.plan) showPlan(j.plan);
+  if (j.video && j.version !== shownVersion) {
+    shownVersion = j.version;
+    const url = `/api/jobs/${jobId}/video?v=${j.version}`;
+    $('video').src = url; $('video').classList.remove('hidden');
+    $('download').href = url; $('download').download = `reel_v${j.version}.mp4`;
+    $('actions').classList.remove('hidden');
+  }
+  if (busy) timer = setTimeout(poll, 2000);
+}
+
+function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+function showPlan(plan) {
+  $('summary').textContent = `${plan.style_summary || ''} · Kolor: ${plan.color_grade}`;
+  const rows = plan.segments.map((s, i) => `<tr><td>${i + 1}</td><td>klip ${s.clip_index} @ ${s.source_start}s</td>
+    <td>${s.duration}s${s.speed !== 1 ? ` ×${s.speed}` : ''}</td><td>${s.effect} / ${s.transition_in}</td><td>${esc(s.text)}</td></tr>`);
+  $('plan').innerHTML = `<tr><th>#</th><th>Izvor</th><th>Trajanje</th><th>Efekat</th><th>Tekst</th></tr>${rows.join('')}`;
+  if (document.activeElement !== $('planJson')) $('planJson').value = JSON.stringify(plan, null, 2);
+}
+
+async function post(path, body) {
+  const r = await fetch(`/api/jobs/${jobId}/${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  if (!r.ok) return alert((await r.json()).detail || 'Greška');
+  poll();
+}
+$('reviseBtn').onclick = () => post('revise', { feedback: $('feedback').value });
+$('renderBtn').onclick = () => {
+  let plan; try { plan = JSON.parse($('planJson').value); } catch { return alert('JSON nije ispravan'); }
+  post('render', { plan });
+};
+$('newBtn').onclick = () => { history.replaceState(null, '', '/'); location.reload(); };
+
+if (location.hash.length > 1) openJob(location.hash.slice(1));
+</script>
+</body>
+</html>
