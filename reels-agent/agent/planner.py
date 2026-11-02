@@ -93,6 +93,8 @@ circle, pixelize, dip_white. Ne preteruj - koristi ih tamo gde ih ima i referenc
 govora, style = none. Kad ima titlova, tekst na ekranu stavljaj tako da se ne preklapa sa njima.
 - Kod talking-head materijala biraj delove klipova gde je izgovorena cela misao (vidi vremena u transkriptu), \
 ne seci usred reci.
+- Klipovi sa "photo": true su fotografije pretvorene u video bez pokreta (6s): za njih uvek koristi zoom_in, \
+zoom_out ili shake da kadar ne bi bio mrtav.
 - Uputstva korisnika imaju prednost nad referencom."""
 
 
@@ -144,7 +146,7 @@ def _reference_text(ref: dict) -> str:
 def _clips_text(clips: list[dict], transcripts: dict | None = None) -> str:
     rows = [{"clip_index": c["index"], "name": c["name"], "duration": c["duration"],
              "orientation": "vertical" if c.get("height", 0) > c.get("width", 0) else "horizontal",
-             "has_audio": c["has_audio"]} for c in clips]
+             "has_audio": c["has_audio"], "photo": c.get("is_photo", False)} for c in clips]
     text = f"KORISNIKOVI KLIPOVI: {json.dumps(rows, ensure_ascii=False)}\n"
     for idx, tr in sorted((transcripts or {}).items(), key=lambda kv: int(kv[0])):
         if tr.get("words"):

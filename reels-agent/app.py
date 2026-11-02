@@ -26,12 +26,10 @@ def _load_env(path: Path) -> None:
 
 _load_env(Path(__file__).parent / ".env")
 
-from agent import pipeline  # noqa: E402  (posle .env, da REELS_AGENT_* podesavanja vaze)
+from agent import analyze, pipeline  # noqa: E402  (posle .env, da REELS_AGENT_* podesavanja vaze)
 
 app = FastAPI(title="Reels Agent")
 STATIC = Path(__file__).parent / "static"
-VIDEO_EXT = {".mp4", ".mov", ".m4v", ".webm", ".mkv", ".avi"}
-AUDIO_EXT = {".mp3", ".wav", ".m4a", ".aac", ".ogg"} | VIDEO_EXT
 
 
 def _safe(name: str) -> str:
@@ -39,12 +37,17 @@ def _safe(name: str) -> str:
     return re.sub(r"[^A-Za-z0-9_-]+", "_", stem)[:60] + ext.lower()
 
 
-def _store(upload: UploadFile, dest: Path, allowed: set[str]) -> Path:
-    if Path(upload.filename or "").suffix.lower() not in allowed:
-        raise HTTPException(400, f"Nepodrzan format: {upload.filename}")
+def _store(upload: UploadFile, dest: Path, allowed: set[str]) -> tuple[Path, str]:
+    """Snima fajl i prepoznaje sta je po sadrzaju (ekstenzija nije bitna, npr. Instagram fajlovi bez .mp4)."""
     with dest.open("wb") as f:
         shutil.copyfileobj(upload.file, f)
-    return dest
+    kind = analyze.media_kind(dest)
+    if kind not in allowed:
+        names = {"video": "video", "image": "slika", "audio": "audio"}
+        ocekivano = " ili ".join(names[k] for k in sorted(allowed))
+        raise HTTPException(400, f"Fajl '{upload.filename}' nije {ocekivano}" +
+                            (" (prepoznat kao: " + names[kind] + ")" if kind else " (nepoznat format)"))
+    return dest, kind
 
 
 def _job(job_id: str) -> pipeline.Job:
@@ -83,14 +86,23 @@ def create_job(
         raise HTTPException(400, "Maksimalno 20 klipova")
     job = pipeline.Job.create()
     inp = job.dir / "input"
-    ref = _store(reference, inp / f"reference_{_safe(reference.filename)}", VIDEO_EXT)
-    clip_files = [str(_store(c, inp / f"clip{i:02d}_{_safe(c.filename)}", VIDEO_EXT)) for i, c in enumerate(clips)]
+    ref, _ = _store(reference, inp / f"reference_{_safe(reference.filename)}", {"video"})
+    clip_files, photo_clips = [], []
+    for i, c in enumerate(clips):
+        path, kind = _store(c, inp / f"clip{i:02d}_{_safe(c.filename)}", {"video", "image"})
+        if kind == "image":
+            try:
+                path = analyze.image_to_clip(path, path.with_name(path.stem + "_photo.mp4"))
+            except RuntimeError as e:
+                raise HTTPException(400, str(e)) from e
+            photo_clips.append(i)
+        clip_files.append(str(path))
     music_path = None
     if music is not None and music.filename:
-        music_path = str(_store(music, inp / f"music_{_safe(music.filename)}", AUDIO_EXT))
+        music_path = str(_store(music, inp / f"music_{_safe(music.filename)}", {"audio", "video"})[0])
     if audio_mode == "uploaded_music" and not music_path:
         raise HTTPException(400, "Izabrao si svoju muziku ali nisi uploadovao fajl")
-    job.save(reference=str(ref), clip_files=clip_files, music=music_path,
+    job.save(reference=str(ref), clip_files=clip_files, photo_clips=photo_clips, music=music_path,
              instructions=instructions, audio_mode=audio_mode, captions=captions, language=language)
     pipeline.start(pipeline.run_new, job)
     return {"id": job.id}

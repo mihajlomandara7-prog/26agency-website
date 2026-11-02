@@ -92,6 +92,7 @@ def run_new(job: Job) -> None:
         for i, path in enumerate(data["clip_files"]):
             job.step(f"Analiziram klip {i + 1}/{len(data['clip_files'])}")
             clips.append(analyze.analyze_clip(Path(path), job.dir, i))
+            clips[-1]["is_photo"] = i in data.get("photo_clips", [])
         transcripts = _transcribe_all(job, data, ref, clips)
         data = job.save(ref=ref, clips=clips)
         job.step("Claude gleda referencu i tvoj materijal i pravi plan montaze...")

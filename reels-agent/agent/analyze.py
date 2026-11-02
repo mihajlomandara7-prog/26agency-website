@@ -139,3 +139,41 @@ def analyze_clip(path: Path, workdir: Path, idx: int) -> dict:
         t = dur * p
         frames.append({"t": round(t, 2), "path": str(extract_frame(path, t, frames_dir / f"clip{idx:02d}_{int(p*100)}.jpg"))})
     return {**info, "index": idx, "file": str(path), "name": path.name, "frames": frames}
+
+
+IMAGE_CODECS = {"mjpeg", "png", "webp", "bmp", "tiff", "gif", "heif", "hevc_image", "jpegxl", "avif"}
+
+
+def media_kind(path: Path) -> str | None:
+    """Prepoznaje sadrzaj fajla bez obzira na ekstenziju: "video", "image", "audio" ili None."""
+    res = run(["ffprobe", "-v", "error", "-print_format", "json", "-show_format", "-show_streams", str(path)])
+    if res.returncode != 0:
+        return None
+    data = json.loads(res.stdout or "{}")
+    streams = data.get("streams", [])
+    fmt = data.get("format", {}).get("format_name", "")
+    v = next((s for s in streams if s.get("codec_type") == "video"), None)
+    a = next((s for s in streams if s.get("codec_type") == "audio"), None)
+    if v:
+        dur = float(data.get("format", {}).get("duration") or v.get("duration") or 0)
+        still = fmt.startswith("image2") or fmt.endswith("_pipe") or (
+            v.get("codec_name") in IMAGE_CODECS and dur < 0.1)
+        if still:
+            return "image"
+        if v.get("disposition", {}).get("attached_pic") and a:
+            return "audio"  # mp3 sa omotom albuma
+        return "video"
+    return "audio" if a else None
+
+
+def image_to_clip(path: Path, out: Path, seconds: float = 6.0) -> Path:
+    """Slika -> vertikalni 1080x1920 video; ako slika nije vertikalna, pozadina je zamucena verzija slike."""
+    vf = ("split[a][b];[a]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,"
+          "boxblur=30:2,eq=brightness=-0.08[bg];[b]scale=1080:1920:force_original_aspect_ratio=decrease[fg];"
+          "[bg][fg]overlay=(W-w)/2:(H-h)/2,setsar=1,format=yuv420p")
+    res = run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-loop", "1", "-i", str(path),
+               "-t", f"{seconds}", "-r", "30", "-filter_complex", vf, "-c:v", "libx264", "-preset", "veryfast",
+               "-crf", "18", str(out)])
+    if res.returncode != 0 or not out.exists():
+        raise RuntimeError(f"Ne mogu da pretvorim sliku {path.name} u video: {res.stderr.strip()[-300:]}")
+    return out
